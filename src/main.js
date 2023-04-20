@@ -16,11 +16,13 @@ import ContactView from './views/ContactView.vue'
 import EditContactView from './views/EditContactView.vue'
 import MapAppContacts from './views/MapAppContacts.vue'
 import MapDb from './views/MapDB.vue'
+import Assessment from './views/Assessment.vue'
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: '/', component: HomeView },
+    { path: '/assessments', component: Assessment },
     { path: '/applications', component: ApplicationsView },
     { path: '/servers', component: ServersView },
     { path: '/contacts', component: ContactView },
