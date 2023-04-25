@@ -16,7 +16,7 @@ import ContactView from './views/ContactView.vue'
 import EditContactView from './views/EditContactView.vue'
 import MapAppContacts from './views/MapAppContacts.vue'
 import MapDb from './views/MapDB.vue'
-import Assessment from './views/Assessment.vue'
+import Assessment from './views/Assessment1.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -27,7 +27,9 @@ const router = createRouter({
     { path: '/servers', component: ServersView },
     { path: '/contacts', component: ContactView },
     { path: '/databases', component: DatabaseView },
+
     { path: '/ressources/add', component: AddRessourceView, props: true, name: 'AddRessourceView' },
+
     {
       path: '/application/servers',
       component: MapAppServers,

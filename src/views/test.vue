@@ -1,240 +1,138 @@
-<!-- <template>
-<div>
-    <Navbar />
-    <div class="container my-5 mx-5">
-        
-    </div>
-    <Footer />
-</div>
-</template>
-
-<script>
-import Navbar from "@/components/Navbar.vue";
-  import Footer from "@/components/Footer.vue";
-export default {
-    components: {
-        Navbar,
-        Footer,
-    },
-  props: {
-    id: {
-      type: String,
-      required: true,
-    },
-  },
-};
-</script> -->
-
-<!-- <template>
-    <div>
-      <Navbar />
-      <div class="container my-5 mx-5">
-        <div v-if="servers.length">
-          <h1>Choose servers for this APP: {{ dataSent }}</h1>
-          <form @submit.prevent="submitServers">
-      <label v-for="server in servers" :key="server">
-        <input type="checkbox"
-               :value="server"
-               v-model="selectedServers"
-        >
-        {{ server.serverName }}
-      </label>
-      <button type="submit">Create App</button>
-    </form>
-          
-        </div>
-      </div>
-      <Footer />
-    </div>
-  </template>
-  
-  <script>
-  import Navbar from "@/components/Navbar.vue";
-  import Footer from "@/components/Footer.vue";
-  import axios from "axios";
-  
-  export default {
-    components: {
-      Navbar,
-      Footer,
-    },
-    
-    data() {
-      return {
-        servers: [],
-        selectedServers: [],
-        formDataa:{},
-        
-      };
-    },
-    created() {
-      
-      const formData = JSON.parse(this.$route.query.formData ); 
-      this.formDataa = JSON.parse(this.$route.query.formData );
-  console.log(formData);
-      axios.get("http://localhost:8080/api/v1/servers/non-archived").then((response) => {
-        this.servers = response.data;
-        console.log(this.servers);
-        
-
-      });
-    },
-    methods: {
-      submitServers() {
-        console.log(this.formDataa);
-        axios.post("http://localhost:8080/api/v1/applications",this.formDataa).then((response) => {
-          const appID = response.data.id;
-          console.log("post done");
-          this.selectedServers.forEach((server) => {
-            const serverId = server.id;
-          axios.put(`http://localhost:8080/api/v1/applications/${appID}/server/link/${serverId}`,this.formDataa).then((response) => {
-            console.log(response.data);
-          });
-        });
-
-        });
-        
-      },
-    },
-  };
-  </script> -->
-
 <template>
-  <div>
-    <nav class="stepped-process" aria-label="Checkout process">
-      <p class="float-start mt-2 me-2 fw-bold d-sm-none">Step</p>
-      <ol>
-        <li
-          class="stepped-process-item"
-          :class="{ active: currentStep === 1, complete: currentStep > 1 }"
-        >
-          <a
-            class="stepped-process-link"
-            href="#"
-            title="1. Map Applications"
-            @click.prevent="setCurrentStep(1)"
-            >Map Applications</a
-          >
-        </li>
-        <li
-          class="stepped-process-item"
-          :class="{ active: currentStep === 2, complete: currentStep > 2 }"
-        >
-          <a
-            class="stepped-process-link"
-            href="#"
-            title="2. Map Databases"
-            aria-current="step"
-            @click.prevent="setCurrentStep(2)"
-            >Map Databases</a
-          >
-        </li>
-      </ol>
+  <div class="container fluid">
+  <div class=".col-6 .col-lg-4">
+ <nav id="sidebarMenu" role="navigation" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+      <div class="sidebar-sticky pt-3">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link active" href="#">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+              Dashboard <span class="sr-only">(current)</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+              Orders
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shopping-cart"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+              Products
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              Customers
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bar-chart-2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+              Reports
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-layers"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+              Integrations
+            </a>
+          </li>
+        </ul>
+
+        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+          <span>Saved reports</span>
+          <a class="d-flex align-items-center text-muted" href="#" aria-label="Add a new report">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus-circle"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+          </a>
+        </h6>
+        <ul class="nav flex-column mb-2">
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              Current month
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              Last quarter
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              Social engagement
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              Year-end sale
+            </a>
+          </li>
+        </ul>
+      </div>
     </nav>
-    <div class="container my-5 mx-5">
-      <div v-if="currentStep === 1">
-        <div v-if="servers.length">
-          <h1 class="d-flex flex-column justify-content-center align-items-center">
-            Choose servers for {{ formDataa.appName }} :
-          </h1>
-          <form
-            @submit.prevent="submitServers"
-            class="d-flex flex-column justify-content-center align-items-center"
-          >
-            <div class="list-group">
-              <div
-                v-for="server in servers"
-                :key="server.id"
-                class="list-group-item d-flex align-items-center"
-              >
-                <input
-                  type="checkbox"
-                  :value="server"
-                  v-model="selectedServers"
-                  class="form-check-input"
-                />
-                <label class="form-check-label ms-3">{{ server.serverName }}</label>
-              </div>
-            </div>
-            <button type="submit" class="btn btn-primary mt-3">Submit</button>
-          </form>
-        </div>
-        <button class="btn btn-primary" @click.prevent="setCurrentStep(2)">Next</button>
-      </div>
-      <div v-if="currentStep === 2">
-        <P>step 2</P>
-      </div>
-    </div>
   </div>
+  <div class=".col-sm-6 .col-lg-8">
+    <Formulaire :currentCategory="currentCategory" />
+
+  </div>
+    </div>
 </template>
-
 <script>
-import Navbar from '@/components/Navbar.vue'
-import Footer from '@/components/Footer.vue'
-import axios from 'axios'
-
-export default {
-  components: {
-    Navbar,
-    Footer
-  },
-
-  data() {
-    return {
-      servers: [],
-      selectedServers: [],
-      formDataa: {},
-      currentStep: 1,
-      steps: [
-        { title: 'Map Applications', isComplete: true },
-        { title: 'Map Databases', isComplete: false }
-      ]
-    }
-  },
-  created() {
-    const formData = JSON.parse(this.$route.query.formData)
-    this.formDataa = JSON.parse(this.$route.query.formData)
-    axios.get('http://localhost:8088/api/v1/servers/non-archived').then((response) => {
-      this.servers = response.data
-    })
-  },
-  methods: {
-    submitServers() {
-      if (this.selectedServers.length === 0) {
-        axios.post('http://localhost:8088/api/v1/applications', this.formDataa).then((response) => {
-          console.log(response.data)
-          this.$router.push('/applications')
-        })
-      } else {
-        axios.post('http://localhost:8088/api/v1/applications', this.formDataa).then((response) => {
-          const appID = response.data.id
-          this.selectedServers.forEach((server) => {
-            const serverId = server.id
-            axios
-              .put(
-                `http://localhost:8088/api/v1/applications/${appID}/server/link/${serverId}`,
-                this.formDataa
-              )
-              .then((response) => {
-                console.log(response.data)
-                this.$router.push('/applications')
-              })
-          })
-        })
-      }
-    },
-    setCurrentStep(step) {
-      this.currentStep = step
-    },
-
-    prevStep() {
-      this.currentStep--
-    },
-
-    nextStep() {
-      this.currentStep++
-      this.steps[this.currentStep - 2].isComplete = true
-    }
-  }
-}
+export default {}
 </script>
+
+<style scoped>
+hr {
+  color: white;
+}
+.nav-link {
+  display: flex;
+  flex-direction: column;
+  margin-top: 40 px;
+  margin-bottom: 20px;
+}
+
+.menu-items {
+  font: 1rem/1.5 var(--bs-font-sans-serif);
+  display: flex;
+  flex-direction: column;
+  margin-top: 0px;
+}
+
+.menu-items > * {
+  margin-top: 15px;
+}
+
+.side-btn:focus {
+  outline: none;
+}
+
+.side-btn.active {
+  background-color: white;
+  color: #f16e00;
+  font-size: 500;
+}
+
+.side-btn {
+  border: none;
+  padding: 10px 0px;
+  cursor: pointer;
+  font-size: 16px;
+  color: white;
+  background-color: transparent;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 200px; /* adjust as needed */
+}
+</style>

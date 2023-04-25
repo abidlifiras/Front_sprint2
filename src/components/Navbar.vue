@@ -64,5 +64,4 @@ export default {
 #logout {
   right: 0;
 }
-
 </style>
