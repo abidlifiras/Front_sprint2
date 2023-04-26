@@ -1,14 +1,15 @@
 <template>
+    <Navbar></Navbar>
     <div class="row">
       <div class="col-md-5 col-lg-3">
         <nav id="sidebarMenu" role="navigation" class="col-md-5 col-lg-3 d-md-block bg-light sidebar collapse">
           <div class="sidebar-sticky ">
             <ul class="nav flex-column">
               <li class="nav-item">
-                <button class="btn btn-primary" @click="showSteps = !showSteps">Assessment</button>
+                <button class="btn btn-primary" @click="toggleSteps()">Assessment</button>
                 <ul v-if="showSteps">
                   <li v-for="(step, index) in steps" :key="step.id">
-                    <a class="nav-link" @click="() => { onStepChange(index + 1); showCategories = !showCategories; }">{{ step.step }}</a>
+                    <a class="nav-link" @click="() => { onStepChange(index + 1); toggleCategories(); }">{{ step.step }}</a>
                     <ul v-if="index + 1 === currentStepIndex && showCategories">
                       <li v-for="(category, index) in currentStepCategories" :key="category.id">
                         <a class="nav-link" @click="onCategoryChange(index)">{{ category.category }}</a>
@@ -22,44 +23,48 @@
         </nav>
       </div>
       <div class="col-md-7 col-lg-9">
-        <Formulaire :currentCategory="currentCategory" />
+        <Formulaire :currentCategory="currentCategory" @category-changed="nextCategory" />
       </div>
     </div>
+    <Footer></Footer>
   </template>
-  
   
   <script>
   import axios from "axios";
   import Formulaire from "../components/Formulaire.vue";
+  import Footer from "@/components/Footer.vue";
+  import Navbar from "@/components/Navbar.vue";
   
   export default {
     components: {
       Formulaire,
+      Footer,
+      Navbar,
     },
     data() {
       return {
         categories: {},
         steps: [],
-        showSteps : false ,
-        showCategories : false ,
+        showSteps: false,
+        showCategories: false,
         currentStepIndex: 1,
         currentCategoryIndex: 0,
       };
     },
     computed: {
       currentStepCategories() {
-        console.log(this.steps[this.currentStepIndex])
-        console.log(this.categories[this.currentStepIndex] )
         return this.categories[this.currentStepIndex] || [];
       },
       currentCategory() {
-        console.log(this.currentStepCategories[this.currentCategoryIndex])
         return this.currentStepCategories[this.currentCategoryIndex] || {};
+      },
+      nextCategory() {
+        console.log(this.currentStepCategories[this.currentCategoryIndex + 1])
+        return this.currentStepCategories[this.currentCategoryIndex + 1] || {};
       },
     },
     mounted() {
       this.fetchSteps();
-      console.log(this.steps)
     },
     methods: {
       async fetchSteps() {
@@ -81,15 +86,17 @@
         this.currentCategoryIndex = index;
       },
       toggleSteps() {
-    this.showSteps = !this.showSteps;
-},
-    toggleCategories() {
+        this.showSteps = !this.showSteps;
+        if (!this.showSteps) {
+          this.showCategories = false;
+        }
+      },
+      toggleCategories() {
         this.showCategories = !this.showCategories;
-    },
+      },
     },
   };
   </script>
   
-  <style>
-  </style>
+  <style></style>
   
