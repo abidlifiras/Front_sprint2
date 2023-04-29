@@ -1,12 +1,12 @@
 <template>
     <Navbar></Navbar>
     <div class="row">
-      <div class="col-md-5 col-lg-3">
-        <nav id="sidebarMenu" role="navigation" class="col-md-5 col-lg-3 d-md-block bg-light sidebar collapse">
+      <div class="col-md-3 col-lg-3">
+        <nav id="sidebarMenu" role="navigation" class="col-md-3 col-lg-3 d-md-block bg-light sidebar collapse">
           <div class="sidebar-sticky ">
             <ul class="nav flex-column">
               <li class="nav-item">
-                <button class="btn btn-primary" @click="toggleSteps()">Assessment</button>
+                <button class="btn btn-primary" @click="toggleSteps()">{{ currentAppName }}</button>
                 <ul v-if="showSteps">
                   <li v-for="(step, index) in steps" :key="step.id">
                     <a class="nav-link" @click="() => { onStepChange(index + 1); toggleCategories(); }">{{ step.step }}</a>
@@ -22,8 +22,8 @@
           </div>
         </nav>
       </div>
-      <div class="col-md-7 col-lg-9">
-        <Formulaire :currentCategory="currentCategory" @category-changed="nextCategory" />
+      <div class="col-md-11 col-lg-8">
+        <Formulaire :currentCategory="currentCategory"  />
       </div>
     </div>
     <Footer></Footer>
@@ -49,6 +49,7 @@
         showCategories: false,
         currentStepIndex: 1,
         currentCategoryIndex: 0,
+        currentAppName : ""
       };
     },
     computed: {
@@ -57,20 +58,20 @@
       },
       currentCategory() {
         return this.currentStepCategories[this.currentCategoryIndex] || {};
-      },
-      nextCategory() {
-        console.log(this.currentStepCategories[this.currentCategoryIndex + 1])
-        return this.currentStepCategories[this.currentCategoryIndex + 1] || {};
-      },
+      }
     },
     mounted() {
-      this.fetchSteps();
+      const id = this.$route.params.id
+      console.log(id)
+      this.fetchSteps(id);
     },
     methods: {
-      async fetchSteps() {
+      async fetchSteps(id) {
         try {
-          const response = await axios.get("http://localhost:8088/api/v1/steps");
-          this.steps = response.data;
+          const response = await axios.get(`http://localhost:8088/api/v1/applications/${id}`);
+          this.currentAppName =response.data.appName
+          console.log("appName"+this.currentAppName)
+          this.steps = response.data.assessment.steps;
           this.steps.forEach((step) => {
             this.categories[step.id] = step.categories;
           });

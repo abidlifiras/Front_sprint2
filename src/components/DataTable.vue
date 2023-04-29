@@ -38,7 +38,7 @@
       </thead>
       <tbody>
         <tr v-for="row in filteredData" v-bind:key="row.id">
-          <td v-for="(column, index) in visibleColumns" :key="index">{{ row[column.name] }}</td>
+          <td v-for="(column, index) in visibleColumns" :key="index" @click="goToDashbort(row.id)">{{ row[column.name] }}</td>
           <td>
             <router-link :to="getEditRoute(row)"
               ><button type="button" class="btn btn-sm btn-primary mt-1">Edit</button></router-link
@@ -267,6 +267,11 @@ export default {
       }
 
       return { name: viewName, params }
+    },
+    goToDashbort(id){
+      if(this.title==="List of Applications"){
+      this.$router.push({ path: `/assessments${id}` })}
+
     }
   }
 }

@@ -30,9 +30,10 @@
             <label  :for="option.id">{{ option.option }}</label>
           </div>
         </div>
-        <div v-else-if="question.type === 'radio_group'">
+        <div v-else-if="question.type === 'radio_group'" class="form-check">
           <div v-for="(option, index) in question.options" :key="index">
             <input
+              class="form-check-input"
               type="radio"
               :id="option.id"
               :value="option.option"
@@ -40,7 +41,7 @@
               :name="'question_' + question.id"
               :required="question.required"
             />
-            <label  :for="option.id">{{ option.option }}</label>
+            <label  class="form-check-label" :for="option.id">{{ option.option }}</label>
           </div>
         </div>
         <div v-else-if="question.type === 'number'">
@@ -52,9 +53,10 @@
     </div>
      <div v-else>
         <p>{{ question.question }}</p>
-        <div v-if="question.type === 'radio_group'">
+        <div v-if="question.type === 'radio_group'" class="form-check">
             <div v-for="(option, index) in question.options" :key="index">
             <input
+                class="form-check-input"
                 type="radio"
                 :id="option.id"
                 :value="option.option"
@@ -63,7 +65,7 @@
                 :required="question.required"
                 :checked="option.option == question.response"
             />
-            <label :for="option.id">{{ option.option }}</label>
+            <label class="form-check-label" :for="option.id">{{ option.option }}</label>
             </div>
         </div>
         <div v-else-if="question.type === 'text'">
@@ -99,6 +101,7 @@ export default {
 
   props: {
     currentCategory: {},
+    currentAppName : "" 
 
   },
   data(){
@@ -111,9 +114,11 @@ export default {
     submit() {
   const keys = Object.keys(this.formResponse);
   console.log(this.formResponse)
+  console.log(this.currentCategory.questions[1].response +" response ")
   for (const id of keys) {
     const url = `http://localhost:8088/api/v1/questions/${id}`;
     const data = { response: this.formResponse[id].toString()};
+    console.log(data.response)
     axios.put(url, data)
       .then(response => console.log(response))
       .catch(error => console.error(error));
