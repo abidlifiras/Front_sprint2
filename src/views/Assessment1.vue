@@ -1,6 +1,6 @@
 <template>
     <Navbar></Navbar>
-    <div class="row">
+    <div v-if="assessmentExist" class="row">
       <div class="col-md-3 col-lg-3">
         <nav id="sidebarMenu" role="navigation" class="col-md-3 col-lg-3 d-md-block bg-light sidebar collapse">
           <div class="sidebar-sticky ">
@@ -26,6 +26,9 @@
         <Formulaire :currentCategory="currentCategory"  :appId =appID />
       </div>
     </div>
+    <div v-else class="row">
+      <h3> pas d'assessment</h3>
+    </div>
     <Footer></Footer>
   </template>
   
@@ -50,7 +53,8 @@
         currentStepIndex: 1,
         currentCategoryIndex: 0,
         currentAppName : "" ,
-        appID : 0
+        appID : 0,
+        assessmentExist : true
       };
     },
     computed: {
@@ -71,10 +75,13 @@
           const response = await axios.get(`http://localhost:8088/api/v1/applications/${id}`);
           this.currentAppName =response.data.appName
           const response1 = await axios.get(`http://localhost:8088/api/v1/applications/${id}/assessment`);
-          this.steps = response1.data.steps;
+          if (!response1.data){
+            this.assessmentExist=false
+          }
+          else{this.steps = response1.data.steps;
           this.steps.forEach((step) => {
             this.categories[step.id] = step.categories;
-          });
+          });}
         } catch (error) {
           console.log(error);
         }
