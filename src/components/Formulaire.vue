@@ -101,7 +101,7 @@ export default {
 
   props: {
     currentCategory: {},
-    currentAppName : "" 
+    appId : 0 
 
   },
   data(){
@@ -114,12 +114,11 @@ export default {
     submit() {
   const keys = Object.keys(this.formResponse);
   console.log(this.formResponse)
-  console.log(this.currentCategory.questions[1].response +" response ")
   for (const id of keys) {
-    const url = `http://localhost:8088/api/v1/questions/${id}`;
+    const url = `http://localhost:8088/api/v1/responses/${this.appId}/question/${id}`;
     const data = { response: this.formResponse[id].toString()};
     console.log(data.response)
-    axios.put(url, data)
+    axios.post(url, data)
       .then(response => console.log(response))
       .catch(error => console.error(error));
   }

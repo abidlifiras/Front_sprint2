@@ -23,7 +23,7 @@
         </nav>
       </div>
       <div class="col-md-11 col-lg-8">
-        <Formulaire :currentCategory="currentCategory"  />
+        <Formulaire :currentCategory="currentCategory"  :appId =appID />
       </div>
     </div>
     <Footer></Footer>
@@ -49,7 +49,8 @@
         showCategories: false,
         currentStepIndex: 1,
         currentCategoryIndex: 0,
-        currentAppName : ""
+        currentAppName : "" ,
+        appID : 0
       };
     },
     computed: {
@@ -61,17 +62,16 @@
       }
     },
     mounted() {
-      const id = this.$route.params.id
-      console.log(id)
-      this.fetchSteps(id);
+      this.appID = this.$route.params.id
+      this.fetchSteps(this.appID);
     },
     methods: {
       async fetchSteps(id) {
         try {
           const response = await axios.get(`http://localhost:8088/api/v1/applications/${id}`);
           this.currentAppName =response.data.appName
-          console.log("appName"+this.currentAppName)
-          this.steps = response.data.assessment.steps;
+          const response1 = await axios.get(`http://localhost:8088/api/v1/applications/${id}/assessment`);
+          this.steps = response1.data.steps;
           this.steps.forEach((step) => {
             this.categories[step.id] = step.categories;
           });
