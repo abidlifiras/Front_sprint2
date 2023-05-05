@@ -73,27 +73,21 @@
           <h1 class="d-flex flex-column justify-content-center align-items-center">
             Choose servers for {{ formData.nameDb }} :
           </h1>
-          <form
-            @submit.prevent="submitServers"
-            class="d-flex flex-column justify-content-center align-items-center"
-          >
-            <div class="list-group">
-              <div
-                v-for="server in servers"
-                :key="server.id"
-                class="list-group-item d-flex align-items-center"
-              >
-                <input
-                  type="checkbox"
-                  :value="server"
-                  v-model="selectedServers"
-                  class="form-check-input"
-                />
-                <label class="form-check-label ms-3">{{ server.serverName }}</label>
+          <div>
+            <form @submit.prevent="submitForm">
+              <div class="form-group">
+                <label>Select which Framework you have knowledge</label>
+                <select ref="framework" v-model="selectedServers" multiple class="form-control">
+                  <option v-for="server in servers" :value="server">{{ server.serverName }}</option>
+                </select>
               </div>
-            </div>
-            <button type="submit" class="btn btn-primary mt-3">Next</button>
-          </form>
+              <div class="form-group">
+                <button type="submit" class="btn btn-primary mt-3">Submit</button>
+              </div>
+            </form>
+            <br />
+          </div>
+          <button type="submit" class="btn btn-primary mt-3">Next</button>
         </div>
       </div>
     </div>
@@ -105,17 +99,20 @@
 import Navbar from '@/components/Navbar.vue'
 import Footer from '@/components/Footer.vue'
 import axios from 'axios'
+import Dropdown from '@/components/Dropdown.vue'
 
 export default {
   components: {
     Navbar,
-    Footer
+    Footer,
+    Dropdown
   },
 
   data() {
     return {
       applications: [],
       databases: [],
+      servers: [],
       selectedServers: [],
       formData: {},
       responseDatabase: {},
@@ -134,6 +131,7 @@ export default {
   created() {
     axios.get('http://localhost:8088/api/v1/servers/all').then((response) => {
       this.servers = response.data
+      console.log(this.selectedServers)
     })
   },
   methods: {
