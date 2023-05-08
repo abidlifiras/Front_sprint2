@@ -1,8 +1,4 @@
 <template>
-  <Navbar></Navbar>
-  <br />
-  <br />
-  <br />
   <div class="container">
     <div class="row">
       <div class="col-lg-12">
@@ -18,14 +14,18 @@
                     <label class="control-label" for="field1"> Files </label>
                     <div class="controls">
                       <div class="entry input-group upload-input-group">
-                        <input class="form-control" name="fields[]" type="file" multiple />
-                        <!--   <button class="btn btn-upload btn-success btn-add" type="button"> 
-                                                  <i class="fa fa-plus"></i>
-                                              </button> -->
+                        <input
+                          ref="uploadFile"
+                          class="form-control"
+                          name="fields[]"
+                          type="file"
+                          multiple
+                          @change="onFileUpload"
+                        />
                       </div>
                     </div>
                     <br />
-                    <button class="btn btn-primary">Upload</button>
+                    <button class="btn btn-primary" @click.prevent="startUpload">Upload</button>
                   </div>
                 </div>
               </div>
@@ -35,49 +35,54 @@
       </div>
     </div>
   </div>
-  <br />
-  <br />
-  <br />
-  <Footer></Footer>
 </template>
 <script>
 import Navbar from '@/components/Navbar.vue'
 import Footer from '@/components/Footer.vue'
 import axios from 'axios'
+
 export default {
   components: {
     Navbar,
     Footer
   },
-  data: () => ({
-    formData: null,
-    loading: false,
-    uploadSuccess: false // new data property
-  }),
+
+  data() {
+    return {
+      formData: null,
+      loading: false,
+      uploadSuccess: false
+    }
+  },
+
   methods: {
     onFileUpload() {
-      let file = this.$refs.uploadFile.files[0]
+      const files = this.$refs.uploadFile.files
       this.formData = new FormData()
-      this.formData.append('file', file)
+
+      for (let i = 0; i < files.length; i++) {
+        this.formData.append('file', files[i])
+      }
     },
+
     startUpload() {
-      this.loading = true // set loading to true
+      this.loading = true
+      console.log(this.formData)
       axios({
-        url: 'http://localhost:5000/demo/upload',
+        url: 'http://localhost:5000/upload',
         method: 'POST',
         data: this.formData,
         headers: {
           Accept: 'application/json',
           'Content-Type': 'multipart/form-data'
         }
-      }).then(() => {
-        this.$router.push({ path: '/Applications' })
+      }).then((response) => {
+        console.log(response.data)
+        window.location.reload()
         setTimeout(() => {
-          this.loading = false // set loading back to false after a delay
+          this.loading = false
           this.uploadSuccess = true
-
-          // set uploadSuccess to true
-        }, 1000) // delay for 3 seconds (adjust as needed)
+        }, 1000)
       })
     }
   }
