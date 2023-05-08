@@ -3,14 +3,27 @@
     <caption class="wide-column">
       <div>{{ title }}</div>
       <div class="btn-group dropend">
-      <button type="button" class="menuItem-active-link btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-        {{ button }}
-      </button>
-      <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="#">Via excel</a></li>
-        <li><a class="dropdown-item" @click="$router.push(addLink)">Via formuaire</a></li>
-      </ul>
-    </div>
+        <button
+          type="button"
+          class="menuItem-active-link btn btn-sm btn-secondary dropdown-toggle"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          {{ button }}
+        </button>
+        <ul class="dropdown-menu">
+          <li>
+            <a
+              class="dropdown-item"
+              type="button"
+              data-bs-toggle="modal"
+              data-bs-target="#exampleModalToggle"
+              >Via excel</a
+            >
+          </li>
+          <li><a class="dropdown-item" @click="$router.push(addLink)">Via formuaire</a></li>
+        </ul>
+      </div>
     </caption>
 
     <input type="text" v-model="searchTerm" v-bind:placeholder="'Search'" />
@@ -25,15 +38,29 @@
             ></span>
           </th>
           <th class="d-flex justify-content-between align-items-center">
-            Actions
-            <button
-              type="button"
-              class="btn btn-sm btn-secondary"
-              data-bs-toggle="modal"
-              href="#exampleModalToggleShow"
-            >
-              ...
-            </button>
+            <div class="btn-group">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-toggle="dropdown"
+                data-bs-display="static"
+                aria-expanded="false"
+              >
+                ...
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-start">
+                <div v-for="(column, index) in columns" :key="index">
+                  <label class="dropdown-item">
+                    <input
+                      type="checkbox"
+                      v-model="visibleColumnsNames"
+                      v-bind:value="column.name"
+                    />
+                    {{ column.label }}
+                  </label>
+                </div>
+              </ul>
+            </div>
           </th>
         </tr>
       </thead>
@@ -43,22 +70,31 @@
             {{ row[column.name] }}
           </td>
           <td>
-            <router-link :to="getEditRoute(row)"
-              ><button type="button" class="btn btn-sm btn-primary mt-1">Edit</button></router-link
-            >
-
-            <button
-              @click="deleteRessource(row.id)"
-              type="button"
-              class="btn btn-sm btn-danger mt-1"
-            >
-              Delete
-            </button>
+            <div class="btn-group">
+              <button type="button" class="btn btn-secondary">Actions</button>
+              <button
+                type="button"
+                class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <span class="visually-hidden">Toggle Dropdown</span>
+              </button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" @click="deleteRessource(row.id)">Delete</a></li>
+                <router-link :to="getEditRoute(row)">
+                  <li><a class="dropdown-item" href="#">Edit</a></li>
+                </router-link>
+                <li v-if="title === 'List of Applications'">
+                  <a class="dropdown-item" @click="onclickDownoald(row)">Download</a>
+                </li>
+              </ul>
+            </div>
           </td>
         </tr>
       </tbody>
     </table>
-    <div id="addResource">
+    <div id="editResource">
       <div
         class="modal fade"
         id="exampleModalToggle"
@@ -69,27 +105,15 @@
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
             <div class="modal-header">
-              <h1 class="modal-title h5" id="exampleModalToggleLabel">{{ button }}</h1>
+              <h1 class="modal-title h5" id="exampleModalToggleLabel">Upload Via Excel</h1>
               <button type="button" class="btn-close" data-bs-dismiss="modal">
                 <span class="visually-hidden">Close</span>
               </button>
             </div>
-            <div class="modal-body">Choose an option</div>
-            <div class="modal-footer">
-              <button
-                class="btn btn-sm btn-secondary"
-                data-bs-dismiss="modal"
-                @click="$router.push('Upload')"
-              >
-                Via Excel
-              </button>
-              <a
-                class="btn btn-sm btn-secondary menuItem-active-link"
-                data-bs-dismiss="modal"
-                @click="$router.push(addLink)"
-                >Via Formulaire</a
-              >
+            <div class="modal-body">
+              <UploadExcel></UploadExcel>
             </div>
+            <div class="modal-footer"></div>
           </div>
         </div>
       </div>
@@ -140,11 +164,17 @@
 </template>
 
 <script>
+import { isTemplateNode } from '@vue/compiler-core'
+import UploadExcel from '../views/UploadExcel.vue'
 import axios from 'axios'
+//import AddInterfaceView from '../views/AddInterfaceView.vue'
 
 export default {
+  components: {
+    UploadExcel
+  },
   name: 'DataTable',
-
+  //components: {AddInterfaceView},
   props: {
     endpoint: {
       type: String,
@@ -181,15 +211,53 @@ export default {
       searchTerm: '',
       sortColumn: '',
       sortDirection: 'asc',
-      visibleColumnsNames: []
+      visibleColumnsNames: [],
+      noDC: 'no Dc ',
+      noENV: 'no ENV '
     }
   },
   created() {
     axios
       .get(this.endpoint)
       .then((response) => {
-        this.data = response.data
-        this.visibleColumnsNames = this.columns.map((column) => column.name)
+        console.log(response.data)
+        //testing on delete !!! not endpoint
+        if (this.delete == 'http://localhost:8080/api/v1/interfaces') {
+          this.data = response.data.map((item) => ({
+            id: item.id,
+            applicationSrc: item.applicationSrc.appName,
+            applicationTarget: item.applicationTarget.appName,
+            protocol: item.protocol,
+            dataFormat: item.dataFormat,
+            notes: item.notes,
+            flow: item.flow,
+            frequency: item.frequency,
+            processingMode: item.processingMode
+          }))
+          this.visibleColumnsNames = this.columns.map((column) => column.name)
+        } else if (this.delete == 'http://localhost:8080/api/v1/servers') {
+          console.log(response.data)
+          this.data = response.data.map((item) => ({
+            id: item.id,
+            environment: item.environment ? item.environment.environmentName : this.noENV,
+            datacenter: item.datacenter ? item.datacenter.name : this.noDC,
+            serverName: item.serverName,
+            dataSource: item.dataSource,
+            type: item.type,
+            role: item.role,
+            currentNumberOfCores: item.currentNumberOfCores,
+            currentRamGb: item.currentRamGb,
+            currentDiskGb: item.currentDiskGb,
+            powerStatus: item.powerStatus,
+            serverNotes: item.serverNotes,
+            ipAddress: item.ipAddress,
+            operatingSystem: item.operatingSystem
+          }))
+          this.visibleColumnsNames = this.columns.map((column) => column.name)
+        } else {
+          this.data = response.data
+          this.visibleColumnsNames = this.columns.map((column) => column.name)
+        }
       })
       .catch((error) => {
         console.error(error)
@@ -238,19 +306,56 @@ export default {
         this.sortDirection = 'asc'
       }
     },
-    deleteRessource(id) {
-      axios
-        .delete(this.delete + '/' + id)
-        .then(() => {
-          window.location.reload()
+    onclickDownoald(row) {
+      fetch(`http://127.0.0.1:5000/generate_report/${row.id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/pdf'
+        }
+      })
+        .then((response) => response.blob())
+        .then((blob) => {
+          const url = window.URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.target = '_blank'
+          link.download = `${row.appName}.pdf`
+          link.click()
         })
         .catch((error) => {
-          console.error(error)
+          console.error('Erreur lors du téléchargement du PDF', error)
         })
+    },
+    deleteRessource(id) {
+      if (this.delete === 'http://localhost:8080/api/v1/interfaces') {
+        axios
+          .delete(this.delete + '/' + id.applicationSrcId + '/' + id.applicationTargetId)
+          .then(() => {
+            window.location.reload()
+          })
+          .catch((error) => {
+            console.error(error)
+          })
+      } else {
+        axios
+          .delete(this.delete + '/' + id)
+          .then(() => {
+            window.location.reload()
+          })
+          .catch((error) => {
+            console.error(error)
+          })
+      }
     },
     getEditRoute(row) {
       let viewName = ''
-      let params = { id: row.id }
+      let params
+      //  params = { id1: row.id.applicationSrcId , id2: row.id.applicationTargetId }
+      if (this.edit === '/interfaces/edit/') {
+        params = { id1: row.id.applicationSrcId, id2: row.id.applicationTargetId }
+      } else {
+        params = { id: row.id }
+      }
 
       switch (this.edit) {
         case '/applications/edit/':
@@ -262,8 +367,17 @@ export default {
         case '/databases/edit/':
           viewName = 'EditDatabaseView'
           break
+        case '/interfaces/edit/':
+          viewName = 'EditInterfaceView'
+          break
         case '/contacts/edit/':
           viewName = 'EditContactView'
+          break
+        case '/datacenters/edit/':
+          viewName = 'EditDataCenterView'
+          break
+        case '/environments/edit/':
+          viewName = 'EditEnvironmentView'
           break
         default:
           console.error(`Unknown edit value: ${this.edit}`)
