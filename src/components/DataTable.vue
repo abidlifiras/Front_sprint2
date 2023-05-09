@@ -21,7 +21,10 @@
               >Via excel</a
             >
           </li>
-          <li><a class="dropdown-item" @click="$router.push(addLink)">Via formuaire</a></li>
+          <li><a v-if="button==='Add Database'" class="dropdown-item" type="button" data-bs-toggle="modal"
+              data-bs-target="#exampleModalToggleDB">Via formuaire</a>
+            <a v-else class="dropdown-item" @click="GoToAddLink" >Via formuaire</a></li>
+          
         </ul>
       </div>
     </caption>
@@ -119,6 +122,32 @@
       </div>
     </div>
 
+
+    <div id="showAddDataBase">
+      <div
+        class="modal fade"
+        id="exampleModalToggleDB"
+        aria-hidden="true"
+        aria-labelledby="exampleModalToggleLabel"
+        tabindex="-1"
+      >
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title h5" id="exampleModalToggleLabel">Add Database</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal">
+                <span class="visually-hidden">Close</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <MapDB></MapDB>
+            </div>
+            <div class="modal-footer"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div id="showColumns">
       <div
         class="modal fade"
@@ -166,12 +195,14 @@
 <script>
 import { isTemplateNode } from '@vue/compiler-core'
 import UploadExcel from '../views/UploadExcel.vue'
+import MapDB from '../views/MapDB.vue'
 import axios from 'axios'
 //import AddInterfaceView from '../views/AddInterfaceView.vue'
 
 export default {
   components: {
-    UploadExcel
+    UploadExcel,
+    MapDB
   },
   name: 'DataTable',
   //components: {AddInterfaceView},
@@ -307,7 +338,7 @@ export default {
       }
     },
     onclickDownoald(row) {
-      fetch(`http://127.0.0.1:5000/generate_report/${row.id}`, {
+      fetch(`http://127.0.0.1:5000/api/v1/generate_report/${row.id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/pdf'
@@ -389,6 +420,9 @@ export default {
       if (this.title === 'List of Applications') {
         this.$router.push({ path: `/assessments${id}` })
       }
+    },
+    GoToAddLink(){
+        this.$router.push({ path: `${this.addLink}` })  
     }
   }
 }
