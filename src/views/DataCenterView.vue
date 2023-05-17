@@ -3,15 +3,15 @@
     <Navbar></Navbar>
     <div class="container my-5 mx-5 footer">
       <Datatable
-        :endpoint="`http://localhost:8080/api/v1/databases/non-archived?filepageSize=5&page=${
+        :endpoint="`http://localhost:8080/api/v1/datacenters/non-archived?filepageSize=5&page=${
           page - 1
         }`"
-        :delete="'http://localhost:8080/api/v1/databases'"
-        :edit="'/databases/edit/'"
-        :columns="databaseColumns"
-        title="List of Databases"
-        addLink="/database/servers"
-        button="Add Database"
+        :delete="'http://localhost:8080/api/v1/datacenters'"
+        :edit="'/datacenters/edit/'"
+        :columns="datacenterColumns"
+        title="List of Datacenters"
+        addLink="/datacenters/add"
+        button="Add Datacenter"
         :key="page"
       />
       <nav aria-label="Page navigation example">
@@ -53,9 +53,10 @@ export default {
   },
   data() {
     return {
-      databaseColumns: [
-        { name: 'nameDb', label: 'Database Name' },
-        { name: 'versionDb', label: 'Database Version' }
+      datacenterColumns: [
+        { name: 'name', label: 'name' },
+        { name: 'notes', label: 'notes' },
+        { name: 'location', label: 'location' }
       ],
       page: 1,
       pages: 0,
@@ -64,7 +65,7 @@ export default {
   },
   mounted() {
     axios
-      .get(` http://localhost:8080/api/v1/databases/all`)
+      .get(` http://localhost:8080/api/v1/datacenters/all`)
       .then((response) => {
         const totalItems = response.data.length
         this.pages = Math.ceil(totalItems / this.pageSize)

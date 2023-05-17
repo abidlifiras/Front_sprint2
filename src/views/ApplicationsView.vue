@@ -1,12 +1,12 @@
 <template>
   <div>
     <Navbar></Navbar>
-    <div class="container my-5 mx-5">
+    <div class="container my-5 mx-5 footer">
       <Datatable
-        :endpoint="`http://localhost:8088/api/v1/applications/non-archived?filepageSize=5&page=${
+        :endpoint="`http://localhost:8080/api/v1/applications/non-archived?filepageSize=5&page=${
           page - 1
         }`"
-        :delete="'http://localhost:8088/api/v1/applications'"
+        :delete="'http://localhost:8080/api/v1/applications'"
         :edit="'/applications/edit/'"
         :columns="applicationColumns"
         title="List of Applications"
@@ -64,7 +64,7 @@ export default {
   },
   mounted() {
     axios
-      .get(` http://localhost:8088/api/v1/applications/all`)
+      .get(` http://localhost:8080/api/v1/applications/all`)
       .then((response) => {
         const totalItems = response.data.length
         this.pages = Math.ceil(totalItems / this.pageSize)
@@ -89,5 +89,9 @@ export default {
 
 .container {
   margin-top: 20px;
+}
+.footer {
+  display: flex;
+  flex-direction: column;
 }
 </style>

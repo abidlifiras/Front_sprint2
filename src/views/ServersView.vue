@@ -1,13 +1,13 @@
 <template>
   <div>
     <Navbar></Navbar>
-    <div class="container my-5 mx-5">
+    <div class="container my-5 mx-5 footer">
       <Datatable
-        :endpoint="`http://localhost:8088/api/v1/servers/non-archived?filepageSize=5&page=${
+        :endpoint="`http://localhost:8080/api/v1/servers/non-archived?filepageSize=5&page=${
           page - 1
         }`"
         :columns="serverColumns"
-        :delete="'http://localhost:8088/api/v1/servers'"
+        :delete="'http://localhost:8080/api/v1/servers'"
         :edit="'/servers/edit/'"
         title="List of Servers"
         addLink="/server/applications"
@@ -61,7 +61,9 @@ export default {
         { name: 'currentRamGb', label: 'Ram in GB', type: 'number', required: true },
         { name: 'currentNumberOfCores', label: 'Numbre Of Cores' },
         { name: 'operatingSystem', label: 'Operating System' },
-        { name: 'serverNotes', label: 'Notes', type: 'textarea' }
+        { name: 'serverNotes', label: 'Notes', type: 'textarea' },
+        { name: 'environment', label: 'Environment' },
+        { name: 'datacenter', label: 'Datacenter' }
       ],
       page: 1,
       pages: 0,
@@ -70,7 +72,7 @@ export default {
   },
   mounted() {
     axios
-      .get(` http://localhost:8088/api/v1/servers/all`)
+      .get(` http://localhost:8080/api/v1/servers/all`)
       .then((response) => {
         const totalItems = response.data.length
         this.pages = Math.ceil(totalItems / this.pageSize)
@@ -95,5 +97,9 @@ export default {
 
 .container {
   margin-top: 20px;
+}
+.footer {
+  display: flex;
+  flex-direction: column;
 }
 </style>

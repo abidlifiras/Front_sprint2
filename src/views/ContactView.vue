@@ -1,12 +1,12 @@
 <template>
   <div>
     <Navbar></Navbar>
-    <div class="container my-5 mx-5">
+    <div class="container my-5 mx-5 footer">
       <Datatable
-        :endpoint="`http://localhost:8088/api/v1/contacts/non-archived?filepageSize=5&page=${
+        :endpoint="`http://localhost:8080/api/v1/contacts/non-archived?filepageSize=5&page=${
           page - 1
         }`"
-        :delete="'http://localhost:8088/api/v1/contacts'"
+        :delete="'http://localhost:8080/api/v1/contacts'"
         :edit="'/contacts/edit/'"
         :columns="contactsColumns"
         title="List of Contacts"
@@ -14,6 +14,7 @@
         button="Add Contacts"
         :key="page"
       />
+
       <nav aria-label="Page navigation example">
         <ul class="pagination justify-content-end">
           <li class="page-item" :class="{ disabled: page === 1 }">
@@ -44,10 +45,12 @@ import axios from 'axios'
 import Datatable from '@/components/Datatable.vue'
 import Footer from '@/components/Footer.vue'
 import Navbar from '@/components/Navbar.vue'
+import SearchableDropdown from '@/components/SearchableDropdown.vue'
 
 export default {
   components: {
     Datatable,
+    SearchableDropdown,
     Footer,
     Navbar
   },
@@ -66,7 +69,7 @@ export default {
   },
   mounted() {
     axios
-      .get(` http://localhost:8088/api/v1/contacts/all`)
+      .get(` http://localhost:8080/api/v1/contacts/all`)
       .then((response) => {
         const totalItems = response.data.length
         this.pages = Math.ceil(totalItems / this.pageSize)
@@ -91,5 +94,9 @@ export default {
 
 .container {
   margin-top: 20px;
+}
+.footer {
+  display: flex;
+  flex-direction: column;
 }
 </style>

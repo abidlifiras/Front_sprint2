@@ -8,6 +8,7 @@
             {{ field.label }}
             <span v-if="field.required" class="required">*</span>
           </label>
+
           <template v-if="field.type === 'text'">
             <input
               :type="field.type"
@@ -15,6 +16,30 @@
               class="form-control"
               :style="field.style"
             />
+          </template>
+          <template v-else-if="field.type === 'selectDCs'">
+            <select
+              v-model="formData[field.name]"
+              class="form-select"
+              :style="field.style"
+              :required="field.required"
+            >
+              <option v-for="option in datacenters" :key="option.value" :value="option.value">
+                {{ option.label }}
+              </option>
+            </select>
+          </template>
+          <template v-else-if="field.type === 'selectENVs'">
+            <select
+              v-model="formData[field.name]"
+              class="form-select"
+              :style="field.style"
+              :required="field.required"
+            >
+              <option v-for="option in environments" :key="option.value" :value="option.value">
+                {{ option.label }}
+              </option>
+            </select>
           </template>
           <template v-else-if="field.type === 'textarea'">
             <textarea
@@ -56,6 +81,9 @@ const FORM_CONFIGS = {
     }
   ],
   serversView: [
+    { name: 'datacenter', label: 'Datacenter', type: 'selectDCs', required: true },
+    { name: 'environment', label: 'Environment', type: 'selectENVs', required: true },
+
     { name: 'serverName', label: 'Server Name', type: 'text', required: true },
     { name: 'ipAddress', label: 'Adress IP', type: 'text', required: true },
     { name: 'dataSource', label: 'Data Source', type: 'text', required: true },
@@ -82,7 +110,10 @@ export default {
     return {
       formData: {},
       formFields: [],
-      endpoint: ''
+      endpoint: '',
+      datacenters: [],
+      environments: [],
+      formDataMinusEnvDc: {}
     }
   },
 
@@ -90,9 +121,32 @@ export default {
     const formConfig = FORM_CONFIGS.serversView
     this.formFields = formConfig || []
 
-    this.endpoint = 'http://localhost:8088/api/v1/servers'
+    this.endpoint = 'http://localhost:8080/api/v1/servers'
   },
   mounted() {
+    axios
+      .get('http://localhost:8080/api/v1/environments/non-archived')
+      .then((response) => {
+        this.environments = response.data.map((env) => ({
+          label: env.environmentName,
+          value: env.id
+        }))
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+    axios
+      .get('http://localhost:8080/api/v1/datacenters/non-archived')
+      .then((response) => {
+        this.datacenters = response.data.map((dc) => ({
+          label: dc.name,
+          value: dc.id
+        }))
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+
     const id = this.$route.params.id
     console.log(id)
     axios
@@ -115,10 +169,26 @@ export default {
         }
       }
       const id = this.$route.params.id
+      this.formDataMinusEnvDc = {
+        environment: this.formData.environment,
+        datacenter: this.formData.datacenter
+      }
+      delete this.formData.environment
+      delete this.formData.datacenter
 
       axios
         .put(`${this.endpoint}/${id}`, this.formData)
         .then((response) => {
+          axios
+            .put(
+              `http://localhost:8080/api/v1/servers/${id}/datacenter/link/${this.formDataMinusEnvDc.datacenter}`
+            )
+            .then(() => {
+              axios.put(
+                `http://localhost:8080/api/v1/servers/${id}/environment/link/${this.formDataMinusEnvDc.environment}`
+              )
+            })
+
           console.log(response.data)
           alert('Server' + this.formData.serverName + 'has been updated')
           this.$router.push({ path: '/servers' })

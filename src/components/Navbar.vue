@@ -38,6 +38,16 @@
           <li class="nav-item">
             <router-link class="nav-link" to="/contacts">Contacts</router-link>
           </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/interfaces">Interfaces</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/datacenters">Datacenters</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/environments">Environments</router-link>
+          </li>
+
           <li class="nav-item" id="logout">
             <a class="nav-link" href="/">Logout</a>
           </li>

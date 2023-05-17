@@ -105,13 +105,16 @@ export default {
 
 <style scoped>
 .footer {
-  position: relative;
+  position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
   background-color: #333;
   color: #fff;
   padding: 10px;
+
+  display: flex;
+  flex-direction: column;
 }
 .content {
   margin-bottom: 60px; /* Set a margin to prevent content from being hidden behind the footer */

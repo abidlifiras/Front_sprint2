@@ -154,7 +154,7 @@
 <script>
 import axios from 'axios'
 export default {
-  name: 'Formulaire',
+  name: 'AssessmentForm',
 
   props: {
     currentCategory: {},
@@ -171,7 +171,7 @@ export default {
       const keys = Object.keys(this.formResponse)
       console.log(this.formResponse)
       for (const id of keys) {
-        const url = `http://localhost:8088/api/v1/responses/${this.appId}/question/${id}`
+        const url = `http://localhost:8080/api/v1/responses/${this.appId}/question/${id}`
         const data = { response: this.formResponse[id].toString() }
         console.log(data.response)
         axios
@@ -181,7 +181,7 @@ export default {
       }
     },
     updateFormResponse(id) {
-      const url = `http://localhost:8088/api/v1/responses/${this.appId}/question/${id}`
+      const url = `http://localhost:8080/api/v1/responses/${this.appId}/question/${id}`
       const data = { response: this.formResponse[id].toString() }
       console.log(data.response)
       axios

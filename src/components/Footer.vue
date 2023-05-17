@@ -18,3 +18,8 @@ export default {
   name: 'Footer'
 }
 </script>
+<style>
+footer {
+  margin-top: auto;
+}
+</style>

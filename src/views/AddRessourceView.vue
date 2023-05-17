@@ -84,11 +84,11 @@ export default {
     const formConfig = FORM_CONFIGS[from]
     this.formFields = formConfig || []
     if (from === 'applicationsView') {
-      this.endpoint = 'http://localhost:8088/api/v1/applications'
+      this.endpoint = 'http://localhost:8080/api/v1/applications'
     } else if (from === 'serversView') {
-      this.endpoint = 'http://localhost:8088/api/v1/servers'
+      this.endpoint = 'http://localhost:8080/api/v1/servers'
     } else if (from === 'databasesView') {
-      this.endpoint = 'http://localhost:8088/api/v1/databases'
+      this.endpoint = 'http://localhost:8080/api/v1/databases'
     }
   },
 
@@ -101,17 +101,17 @@ export default {
           return
         }
       }
-      if (this.endpoint === 'http://localhost:8088/api/v1/applications') {
+      if (this.endpoint === 'http://localhost:8080/api/v1/applications') {
         this.$router.push({
           name: 'MapAppServers',
           query: { formData: JSON.stringify(this.formData) } // add form data to query parameter
         })
-      } else if (this.endpoint === 'http://localhost:8088/api/v1/servers') {
+      } else if (this.endpoint === 'http://localhost:8080/api/v1/servers') {
         this.$router.push({
           name: 'MapServerApps',
           query: { formData: JSON.stringify(this.formData) } // add form data to query parameter
         })
-      } else if (this.endpoint === 'http://localhost:8088/api/v1/databases') {
+      } else if (this.endpoint === 'http://localhost:8080/api/v1/databases') {
         axios
           .post(this.endpoint, this.formData)
           .then((response) => {

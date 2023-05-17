@@ -46,6 +46,28 @@
     </nav>
     <div class="container my-5 mx-5">
       <div v-if="currentStep === 1">
+        <div class="container my-5">
+          <div class="row justify-content-center">
+            <div class="col-md-6">
+              <label for="dc_select" class="form-label">Select a Datacenter:</label>
+              <select id="dc-select" v-model="selectedDataCenter" class="form-select mb-3">
+                <option disabled value="">Please select one</option>
+                <option v-for="dc in datacenters" :key="dc.id" :value="dc.id">
+                  {{ dc.name }}
+                </option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="env-select" class="form-label">Select an Environment:</label>
+              <select id="env-select" v-model="selectedEnvironment" class="form-select mb-3">
+                <option disabled value="">Please select one</option>
+                <option v-for="env in environments" :key="env.id" :value="env.id">
+                  {{ env.environmentName }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
         <div class="container">
           <form class="my-4">
             <div v-for="(field, index) in formFields" :key="index" class="mb-3">
@@ -161,6 +183,10 @@ export default {
     return {
       applications: [],
       databases: [],
+      environments: [],
+      datacenters: [],
+      selectedDataCenter: '',
+      selectedEnvironment: '',
       selectedApplications: [],
       selectedDatabases: [],
       formData: {},
@@ -191,12 +217,18 @@ export default {
     }
   },
   created() {
-    axios.get('http://localhost:8088/api/v1/applications/all').then((response) => {
+    axios.get('http://localhost:8080/api/v1/applications/all').then((response) => {
       this.applications = response.data
     })
-    axios.get('http://localhost:8088/api/v1/databases/non-archived').then((response) => {
+    axios.get('http://localhost:8080/api/v1/databases/non-archived').then((response) => {
       this.databases = response.data
-    })
+    }),
+      axios.get('http://localhost:8080/api/v1/environments/non-archived').then((response) => {
+        this.environments = response.data
+      }),
+      axios.get('http://localhost:8080/api/v1/datacenters/non-archived').then((response) => {
+        this.datacenters = response.data
+      })
   },
   methods: {
     submitApplications() {
@@ -204,29 +236,67 @@ export default {
       console.log(this.selectedApplications)
       console.log(this.formData)
     },
+    envDcAdd(resp, dcId, envId) {
+      return new Promise((resolve) => {
+        if (dcId && envId) {
+          axios
+            .put(`http://localhost:8080/api/v1/servers/${resp}/datacenter/link/${dcId}`)
+            .then(() => {
+              axios
+                .put(`http://localhost:8080/api/v1/servers/${resp}/environment/link/${envId}`)
+                .then(() => {
+                  resolve()
+                })
+                .catch(console.error)
+            })
+            .catch(console.error)
+        } else if (dcId) {
+          axios
+            .put(`http://localhost:8080/api/v1/servers/${resp}/datacenter/link/${dcId}`)
+            .catch(console.error)
+        } else if (envId) {
+          axios
+            .put(`http://localhost:8080/api/v1/servers/${resp}/environment/link/${envId}`)
+            .catch(console.error)
+        } else {
+          console.log('nothing to map')
+        }
+      })
+    },
     submitDatabases() {
       this.responseServer = JSON.stringify(this.formData)
       console.log(this.responseServer)
 
       if (this.selectedApplications.length === 0) {
         if (this.selectedDatabases.length === 0) {
+          //app 0 w db 0
+
           axios
-            .post('http://localhost:8088/api/v1/servers', this.responseServer, {
+            .post('http://localhost:8080/api/v1/servers', this.responseServer, {
               headers: {
                 'Content-Type': 'application/json'
               }
             })
             .then((response) => {
-              console.log(response.data)
-              alert('Resource created successfully!')
-              this.$router.push('/servers')
+              // console.log(response.data)
+              // alert('Ressource created successfully!')
+              // this.$router.push('/servers')
+              this.envDcAdd(response.data.id, this.selectedDataCenter, this.selectedEnvironment)
+                .then(() => {
+                  alert('Resource created successfully!')
+                  this.$router.push('/servers')
+                })
+                .catch((error) => {
+                  console.error(error)
+                })
             })
             .catch((error) => {
               console.error(error)
             })
         } else {
+          //app 0 w db > 0
           axios
-            .post('http://localhost:8088/api/v1/servers', this.responseServer, {
+            .post('http://localhost:8080/api/v1/servers', this.responseServer, {
               headers: {
                 'Content-Type': 'application/json'
               }
@@ -237,7 +307,7 @@ export default {
                 const databaseId = database.id
                 axios
                   .put(
-                    `http://localhost:8088/api/v1/servers/${serverID}/database/link/${databaseId}`,
+                    `http://localhost:8080/api/v1/servers/${serverID}/database/link/${databaseId}`,
                     this.responseServer,
                     {
                       headers: {
@@ -246,16 +316,21 @@ export default {
                     }
                   )
                   .then(() => {
-                    alert('Resource created successfully!')
-                    this.$router.push('/servers')
+                    this.envDcAdd(serverID, this.selectedDataCenter, this.selectedEnvironment).then(
+                      () => {
+                        alert('Resource created successfully!')
+                        this.$router.push('/servers')
+                      }
+                    )
                   })
               })
             })
         }
       } else {
+        //app > 0 w db 0
         if (this.selectedDatabases.length === 0) {
           axios
-            .post('http://localhost:8088/api/v1/servers', this.responseServer, {
+            .post('http://localhost:8080/api/v1/servers', this.responseServer, {
               headers: {
                 'Content-Type': 'application/json'
               }
@@ -266,7 +341,7 @@ export default {
                 const appId = application.id
                 axios
                   .put(
-                    `http://localhost:8088/api/v1/servers/${serverID}/application/link/${appId}`,
+                    `http://localhost:8080/api/v1/servers/${serverID}/application/link/${appId}`,
                     this.responseServer,
                     {
                       headers: {
@@ -275,14 +350,19 @@ export default {
                     }
                   )
                   .then(() => {
-                    alert('Resource created successfully!')
-                    this.$router.push('/servers')
+                    this.envDcAdd(serverID, this.selectedDataCenter, this.selectedEnvironment).then(
+                      () => {
+                        alert('Resource created successfully!')
+                        this.$router.push('/servers')
+                      }
+                    )
                   })
               })
             })
         } else {
+          //app > 0 w db > 0
           axios
-            .post('http://localhost:8088/api/v1/servers', this.responseServer, {
+            .post('http://localhost:8080/api/v1/servers/all', this.responseServer, {
               headers: {
                 'Content-Type': 'application/json'
               }
@@ -292,7 +372,7 @@ export default {
               this.selectedApplications.forEach((application) => {
                 const appId = application.id
                 axios.put(
-                  `http://localhost:8088/api/v1/servers/${serverID}/application/link/${appId}`,
+                  `http://localhost:8080/api/v1/servers/${serverID}/application/link/${appId}`,
                   this.responseServer,
                   { headers: { 'Content-Type': 'application/json' } }
                 )
@@ -301,7 +381,7 @@ export default {
                 const databaseId = database.id
                 axios
                   .put(
-                    `http://localhost:8088/api/v1/servers/${serverID}/database/link/${databaseId}`,
+                    `http://localhost:8080/api/v1/servers/${serverID}/database/link/${databaseId}`,
                     this.responseServer,
                     {
                       headers: {
@@ -310,8 +390,12 @@ export default {
                     }
                   )
                   .then(() => {
-                    alert('Resource created successfully!')
-                    this.$router.push('/servers')
+                    this.envDcAdd(serverID, this.selectedDataCenter, this.selectedEnvironment).then(
+                      () => {
+                        alert('Resource created successfully!')
+                        this.$router.push('/servers')
+                      }
+                    )
                   })
               })
             })

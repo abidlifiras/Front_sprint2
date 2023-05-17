@@ -86,7 +86,7 @@ export default {
     const formConfig = FORM_CONFIGS.applicationsView
     this.formFields = formConfig || []
 
-    this.endpoint = 'http://localhost:8088/api/v1/applications'
+    this.endpoint = 'http://localhost:8080/api/v1/applications'
   },
   mounted() {
     const id = this.$route.params.id

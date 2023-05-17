@@ -21,15 +21,28 @@
               >Via excel</a
             >
           </li>
-          <li><a v-if="button==='Add Database'" class="dropdown-item" type="button" data-bs-toggle="modal"
-              data-bs-target="#exampleModalToggleDB">Via formuaire</a>
-            <a v-else class="dropdown-item" @click="GoToAddLink" >Via formuaire</a></li>
-          
+          <li>
+            <a
+              v-if="button === 'Add Database'"
+              class="dropdown-item"
+              type="button"
+              data-bs-toggle="modal"
+              data-bs-target="#exampleModalToggleDB"
+              >Via formulaire</a
+            >
+            <a v-else class="dropdown-item" @click="GoToAddLink">Via formuaire</a>
+          </li>
         </ul>
       </div>
     </caption>
 
-    <input type="text" v-model="searchTerm" v-bind:placeholder="'Search'" />
+    <input
+      type="text"
+      v-model="searchTerm"
+      v-bind:placeholder="'Search'"
+      class="form-control"
+      style="width: 204px; height: 35px"
+    />
     <table class="table table-hover">
       <thead>
         <tr>
@@ -121,7 +134,6 @@
         </div>
       </div>
     </div>
-
 
     <div id="showAddDataBase">
       <div
@@ -358,6 +370,10 @@ export default {
         })
     },
     deleteRessource(id) {
+      const confirmed = window.confirm('Are you sure you want to delete this resource?')
+      if (!confirmed) {
+        return
+      }
       if (this.delete === 'http://localhost:8080/api/v1/interfaces') {
         axios
           .delete(this.delete + '/' + id.applicationSrcId + '/' + id.applicationTargetId)
@@ -418,11 +434,11 @@ export default {
     },
     goToDashbort(id) {
       if (this.title === 'List of Applications') {
-        this.$router.push({ path: `/assessments${id}` })
+        this.$router.push({ path: `/applications/${id}` })
       }
     },
-    GoToAddLink(){
-        this.$router.push({ path: `${this.addLink}` })  
+    GoToAddLink() {
+      this.$router.push({ path: `${this.addLink}` })
     }
   }
 }

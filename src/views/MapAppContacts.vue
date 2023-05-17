@@ -134,7 +134,7 @@ export default {
     }
   },
   created() {
-    axios.get('http://localhost:8088/api/v1/applications/all').then((response) => {
+    axios.get('http://localhost:8080/api/v1/applications/all').then((response) => {
       this.applications = response.data
     })
   },
@@ -143,7 +143,7 @@ export default {
       this.responseContact = JSON.stringify(this.formData)
       if (this.selectedApplications.length === 0) {
         axios
-          .post('http://localhost:8088/api/v1/contacts', this.responseContact, {
+          .post('http://localhost:8080/api/v1/contacts', this.responseContact, {
             headers: {
               'Content-Type': 'application/json'
             }
@@ -158,7 +158,7 @@ export default {
           })
       } else {
         axios
-          .post('http://localhost:8088/api/v1/contacts', this.responseContact, {
+          .post('http://localhost:8080/api/v1/contacts', this.responseContact, {
             headers: {
               'Content-Type': 'application/json'
             }
@@ -169,7 +169,7 @@ export default {
               const applicationId = application.id
               axios
                 .put(
-                  `http://localhost:8088/api/v1/contacts/${contactID}/application/link/${applicationId}`,
+                  `http://localhost:8080/api/v1/contacts/${contactID}/application/link/${applicationId}`,
                   this.responseContact,
                   {
                     headers: {

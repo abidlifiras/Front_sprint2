@@ -3,15 +3,15 @@
     <Navbar></Navbar>
     <div class="container my-5 mx-5 footer">
       <Datatable
-        :endpoint="`http://localhost:8080/api/v1/databases/non-archived?filepageSize=5&page=${
+        :endpoint="`http://localhost:8080/api/v1/interfaces/non-archived?filepageSize=5&page=${
           page - 1
         }`"
-        :delete="'http://localhost:8080/api/v1/databases'"
-        :edit="'/databases/edit/'"
-        :columns="databaseColumns"
-        title="List of Databases"
-        addLink="/database/servers"
-        button="Add Database"
+        :delete="'http://localhost:8080/api/v1/interfaces'"
+        :edit="'/interfaces/edit/'"
+        :columns="interfacesColumns"
+        title="List of Interfaces"
+        addLink="/interfaces/add"
+        button="Add Interface"
         :key="page"
       />
       <nav aria-label="Page navigation example">
@@ -41,21 +41,27 @@
 
 <script>
 import axios from 'axios'
-import Navbar from '@/components/Navbar.vue'
 import Datatable from '@/components/Datatable.vue'
 import Footer from '@/components/Footer.vue'
+import Navbar from '@/components/Navbar.vue'
 
 export default {
   components: {
-    Navbar,
     Datatable,
-    Footer
+    Footer,
+    Navbar
   },
   data() {
     return {
-      databaseColumns: [
-        { name: 'nameDb', label: 'Database Name' },
-        { name: 'versionDb', label: 'Database Version' }
+      interfacesColumns: [
+        { name: 'applicationSrc', label: 'Source app' },
+        { name: 'applicationTarget', label: 'Target app' },
+        { name: 'protocol', label: 'Protocol' },
+        { name: 'dataFormat', label: 'Data format' },
+        { name: 'notes', label: 'Notes' },
+        { name: 'flow', label: 'Flow' },
+        { name: 'frequency', label: 'Frequency' },
+        { name: 'processingMode', label: 'Processing mode' }
       ],
       page: 1,
       pages: 0,
@@ -64,7 +70,7 @@ export default {
   },
   mounted() {
     axios
-      .get(` http://localhost:8080/api/v1/databases/all`)
+      .get(` http://localhost:8080/api/v1/interfaces`)
       .then((response) => {
         const totalItems = response.data.length
         this.pages = Math.ceil(totalItems / this.pageSize)

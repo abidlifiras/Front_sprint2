@@ -58,7 +58,7 @@ export default {
     return {
       applications: [],
       databases: [],
-      servers:[],
+      servers: [],
       selectedServers: [],
       formData: {},
       responseDatabase: {},
@@ -81,64 +81,66 @@ export default {
         const servers = response.data.map((server) => {
           return {
             id: server.id,
-            name: server.serverName,
-          };
-        });
-        this.servers = servers;
+            name: server.serverName
+          }
+        })
+        this.servers = servers
       })
       .catch((error) => {
-        console.log(error);
-      });
+        console.log(error)
+      })
   },
   methods: {
     onServerSelected(selectedOptions) {
-      this.selectedServers = selectedOptions;    },
+      this.selectedServers = selectedOptions
+    },
     submitServers() {
-      if(this.submitForm()==true){
-      this.responseDatabase = JSON.stringify(this.formData)
-      if (this.selectedServers.length === 0) {
-        axios
-          .post('http://localhost:8080/api/v1/databases', this.responseDatabase, {
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          })
-          .then((response) => {
-            console.log(response.data)
-            alert('Resource created successfully!')
-          })
-          .catch((error) => {
-            console.error(error)
-          })
-      } else {
-        axios
-          .post('http://localhost:8080/api/v1/databases', this.responseDatabase, {
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          })
-          .then((response) => {
-            const DbID = response.data.id
-            this.selectedServers.forEach((server) => {
-              const serverId = server.id
-              axios
-                .put(
-                  `http://localhost:8080/api/v1/databases/${DbID}/server/link/${serverId}`,
-                  this.responseDatabase,
-                  {
-                    headers: {
-                      'Content-Type': 'application/json'
+      if (this.submitForm() == true) {
+        this.responseDatabase = JSON.stringify(this.formData)
+        if (this.selectedServers.length === 0) {
+          axios
+            .post('http://localhost:8080/api/v1/databases', this.responseDatabase, {
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            })
+            .then((response) => {
+              console.log(response.data)
+              alert('Resource created successfully!')
+            })
+            .catch((error) => {
+              console.error(error)
+            })
+        } else {
+          axios
+            .post('http://localhost:8080/api/v1/databases', this.responseDatabase, {
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            })
+            .then((response) => {
+              const DbID = response.data.id
+              this.selectedServers.forEach((server) => {
+                const serverId = server.id
+                axios
+                  .put(
+                    `http://localhost:8080/api/v1/databases/${DbID}/server/link/${serverId}`,
+                    this.responseDatabase,
+                    {
+                      headers: {
+                        'Content-Type': 'application/json'
+                      }
                     }
-                  }
-                )
-                .catch((error) => {
-            console.error(error)
-          }) })
-          
-          alert('Resource created successfully!')
-          window.location.reload()                
-            
-          })}
+                  )
+                  .catch((error) => {
+                    console.error(error)
+                  })
+              })
+
+              alert('Resource created successfully!')
+              window.location.reload()
+            })
+        }
       }
     },
     setCurrentStep(step) {

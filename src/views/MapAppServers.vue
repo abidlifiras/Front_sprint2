@@ -183,10 +183,10 @@ export default {
     }
   },
   created() {
-    axios.get('http://localhost:8088/api/v1/servers/non-archived').then((response) => {
+    axios.get('http://localhost:8080/api/v1/servers/non-archived').then((response) => {
       this.servers = response.data
     })
-    axios.get('http://localhost:8088/api/v1/contacts/non-archived').then((response) => {
+    axios.get('http://localhost:8080/api/v1/contacts/non-archived').then((response) => {
       this.contacts = response.data
     })
   },
@@ -203,7 +203,7 @@ export default {
       if (this.selectedServers.length === 0) {
         if (this.selectedContacts.length === 0) {
           axios
-            .post('http://localhost:8088/api/v1/applications', this.responseApplication, {
+            .post('http://localhost:8080/api/v1/applications', this.responseApplication, {
               headers: {
                 'Content-Type': 'application/json'
               }
@@ -218,7 +218,7 @@ export default {
             })
         } else {
           axios
-            .post('http://localhost:8088/api/v1/applications', this.responseApplication, {
+            .post('http://localhost:8080/api/v1/applications', this.responseApplication, {
               headers: {
                 'Content-Type': 'application/json'
               }
@@ -229,7 +229,7 @@ export default {
                 const contactId = contact.id
                 axios
                   .put(
-                    `http://localhost:8088/api/v1/applications/${appID}/contact/link/${contactId}`,
+                    `http://localhost:8080/api/v1/applications/${appID}/contact/link/${contactId}`,
                     this.responseApplication,
                     {
                       headers: {
@@ -247,7 +247,7 @@ export default {
       } else {
         if (this.selectedContacts.length === 0) {
           axios
-            .post('http://localhost:8088/api/v1/applications', this.responseApplication, {
+            .post('http://localhost:8080/api/v1/applications', this.responseApplication, {
               headers: {
                 'Content-Type': 'application/json'
               }
@@ -258,7 +258,7 @@ export default {
                 const serverId = server.id
                 axios
                   .put(
-                    `http://localhost:8088/api/v1/applications/${appID}/server/link/${serverId}`,
+                    `http://localhost:8080/api/v1/applications/${appID}/server/link/${serverId}`,
                     this.responseApplication,
                     {
                       headers: {
@@ -266,15 +266,14 @@ export default {
                       }
                     }
                   )
-                  .then(() => {
-                    alert('Resource created successfully!')
-                    this.$router.push('/applications')
-                  })
+                  .then(() => {})
               })
+              alert('Resource created successfully!')
+              this.$router.push('/applications')
             })
         } else {
           axios
-            .post('http://localhost:8088/api/v1/applications', this.responseApplication, {
+            .post('http://localhost:8080/api/v1/applications', this.responseApplication, {
               headers: {
                 'Content-Type': 'application/json'
               }
@@ -284,7 +283,7 @@ export default {
               this.selectedServers.forEach((server) => {
                 const serverId = server.id
                 axios.put(
-                  `http://localhost:8088/api/v1/applications/${applicationID}/server/link/${serverId}`,
+                  `http://localhost:8080/api/v1/applications/${applicationID}/server/link/${serverId}`,
                   this.responseApplication,
                   { headers: { 'Content-Type': 'application/json' } }
                 )
@@ -293,7 +292,7 @@ export default {
                 const contactId = contact.id
                 axios
                   .put(
-                    `http://localhost:8088/api/v1/applications/${applicationID}/contact/link/${contactId}`,
+                    `http://localhost:8080/api/v1/applications/${applicationID}/contact/link/${contactId}`,
                     this.responseApplication,
                     {
                       headers: {
@@ -301,11 +300,10 @@ export default {
                       }
                     }
                   )
-                  .then(() => {
-                    alert('Resource created successfully!')
-                    this.$router.push('/applications')
-                  })
+                  .then(() => {})
               })
+              alert('Resource created successfully!')
+              this.$router.push('/applications')
             })
         }
       }

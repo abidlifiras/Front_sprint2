@@ -69,7 +69,7 @@ export default {
       this.loading = true
       console.log(this.formData)
       axios({
-        url: 'http://localhost:5000/upload',
+        url: 'http://localhost:5000/api/v1/upload',
         method: 'POST',
         data: this.formData,
         headers: {

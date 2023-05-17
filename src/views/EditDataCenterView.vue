@@ -31,6 +31,13 @@
               type="number"
             />
           </template>
+          <template v-else-if="field.type === 'select'">
+            <select v-model="formData[field.name]" class="form-select" :style="field.style">
+              <option v-for="option in field.options" :key="option.value" :value="option.value">
+                {{ option.label }}
+              </option>
+            </select>
+          </template>
         </div>
         <button @click.prevent="submitForm" class="btn btn-primary">Next</button>
       </form>
@@ -45,9 +52,10 @@ import Footer from '@/components/Footer.vue'
 import axios from 'axios'
 
 const FORM_CONFIGS = {
-  databasesView: [
-    { name: 'nameDb', label: 'Database Name', type: 'text', required: true },
-    { name: 'versionDb', label: 'Database Version', type: 'text', required: true }
+  datacenterView: [
+    { name: 'name', label: 'Datacenter Name', type: 'text', required: true },
+    { name: 'notes', label: 'notes', type: 'textarea', required: true },
+    { name: 'location', label: 'location', type: 'text', required: true }
   ]
 }
 
@@ -65,10 +73,10 @@ export default {
   },
 
   created() {
-    const formConfig = FORM_CONFIGS.databasesView
+    const formConfig = FORM_CONFIGS.datacenterView
     this.formFields = formConfig || []
 
-    this.endpoint = 'http://localhost:8080/api/v1/databases'
+    this.endpoint = 'http://localhost:8080/api/v1/datacenters'
   },
   mounted() {
     const id = this.$route.params.id
@@ -98,8 +106,8 @@ export default {
         .put(`${this.endpoint}/${id}`, this.formData)
         .then((response) => {
           console.log(response.data)
-          alert('Database' + this.formData.serverName + 'has been updated')
-          this.$router.push({ path: '/databases' })
+          alert('Datacenter' + this.formData.name + 'has been updated')
+          this.$router.push({ path: '/datacenters' })
         })
         .catch((error) => {
           console.log(error)
