@@ -15,6 +15,9 @@
             <template v-else-if="header.name === 'datacenter'">
               {{ item[header.name] ? item[header.name].name : this.noDc }}
             </template>
+            <template v-else-if="header.name === 'applicationSrc' || header.name === 'applicationTarget'  ">
+              {{ item[header.name].appName}}
+            </template>
             <template v-else>
               {{ item[header.name] }}
             </template>
@@ -61,7 +64,7 @@ export default {
         .get(this.apiUrl)
         .then((response) => {
           this.items = response.data
-          console.log(this.items)
+          console.log(this.apiUrl)
         })
         .catch((error) => {
           console.error(error)

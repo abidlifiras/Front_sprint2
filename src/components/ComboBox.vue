@@ -51,16 +51,20 @@
             {{ option.name }}
           </button>
           <!-- <h6 v-if="filteredOptions.length == 0" class="no-results-text">No results found</h6> -->
-          <button v-if="filteredOptions.length === 0" type="button" class="dropdown-item" @click="showAdd" data-bs-toggle="modal"
-          data-bs-target="#exampleModaleee"  >
+          <button
+            v-if="filteredOptions.length === 0"
+            type="button"
+            class="dropdown-item"
+            @click="showAdd"
+            data-bs-toggle="modal"
+            data-bs-target="#exampleModaleee"
+          >
             Add Server
           </button>
 
           <!-- Button trigger modal -->
 
-
-<!-- Modal -->
-
+          <!-- Modal -->
 
           <!-- <div class="dropdown-footer" v-show="selectedOptions.length > 0">
           <button type="button" class="btn btn-secondary" @click="toggleDropdown">
@@ -71,70 +75,68 @@
       </div>
     </div>
   </div>
-
 </template>
 <script>
-
-
 export default {
-    props: {
-        options: {
-            type: Array
-        },
-        placeholder: {
-            type: String,
-            default: "Select an option"
-        },
-       multiple: {
-        type: Boolean,
-        default: true
+  props: {
+    options: {
+      type: Array
+    },
+    placeholder: {
+      type: String,
+      default: 'Select an option'
+    },
+    multiple: {
+      type: Boolean,
+      default: true
+    }
+  },
+  data() {
+    return {
+      selectedOption: null,
+      searchTerm: '',
+      selectedOptions: [],
+      selectedOptionName: [],
+      isOpen: false
+    }
+  },
+  computed: {
+    filteredOptions() {
+      if (!this.searchTerm) {
+        return this.options
+      }
+      const term = this.searchTerm.toLowerCase()
+      return this.options.filter((option) => option.name.toLowerCase().includes(term))
+    }
+  },
+  methods: {
+    showAdd() {
+      this.$emit('button-pop', true)
+    },
+    onOptionSelected(option) {
+      if (this.multiple) {
+        if (this.selectedOptions.includes(option)) {
+          const index = this.selectedOptions.indexOf(option)
+          this.selectedOptions.splice(index, 1)
+        } else {
+          this.selectedOptions.push(option)
+        }
+        this.selectedOptionName = this.selectedOptions.map((option) => option.name)
+        this.$emit('option-selected', this.selectedOptions)
+      } else {
+        this.selectedOptions = [option]
+        this.selectedOptionName = option ? [option.name] : []
+        this.$emit('option-selected', option)
+        this.isOpen = false
       }
     },
-    data() {
-        return {
-            selectedOption: null,
-            searchTerm: "",
-            selectedOptions: [],
-            selectedOptionName: [],
-            isOpen: false
-        };
-    },
-    computed: {
-        filteredOptions() {
-            if (!this.searchTerm) {
-                return this.options;
-            }
-            const term = this.searchTerm.toLowerCase();
-            return this.options.filter((option) => option.name.toLowerCase().includes(term));
-        }
-    },
-    methods: {
-        showAdd() {
-            this.$emit("button-pop", true);
-        },
-        onOptionSelected(option) {
-            if (this.multiple) {
-              if (this.selectedOptions.includes(option)) {
-                const index = this.selectedOptions.indexOf(option);
-                this.selectedOptions.splice(index, 1);
-              } else {
-                this.selectedOptions.push(option);
-              }
-              this.selectedOptionName = this.selectedOptions.map((option) => option.name);
-              this.$emit("option-selected", this.selectedOptions);
-            } else {
-              this.selectedOptions = [option];
-              this.selectedOptionName = option ? [option.name] : [];
-              this.$emit("option-selected", option);
-              this.isOpen = false; }
-          },    
-           toggleDropdown() {
-            this.isOpen = !this.isOpen;
-            if (!this.isOpen) {
-                this.$refs.dropdown.querySelector(".btn").blur();
-            }
-        }
+    toggleDropdown() {
+      this.isOpen = !this.isOpen
+      if (!this.isOpen) {
+        this.$refs.dropdown.querySelector('.btn').blur()
+      }
     }
+  }
 }
 </script>
 <style>
@@ -149,6 +151,6 @@ export default {
   background-color: #fff;
 }
 .multiple-selection {
-  background-color: #f5f5f5; 
+  background-color: #f5f5f5;
 }
 </style>

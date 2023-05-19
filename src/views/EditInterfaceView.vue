@@ -150,11 +150,12 @@ export default {
 
     this.endpoint = 'http://localhost:8080/api/v1/interfaces'
 
-    const src = this.$route.params.id1
-    const target = this.$route.params.id2
+    const id = this.$route.params.id
+    
+    
 
     axios
-      .get(`${this.endpoint}/${src}/${target}`)
+      .get(`${this.endpoint}/${id}`)
       .then((response) => {
         this.formData = response.data
       })
@@ -165,6 +166,9 @@ export default {
 
   methods: {
     submitForm() {
+      console.log("el formdata melowel")
+      console.log(this.formData)
+      console.log("el formdata melowel")
       // Check if required fields are empty
       for (const field of this.formFields) {
         if (field.required && !this.formData[field.name]) {
@@ -173,8 +177,7 @@ export default {
         }
       }
 
-      const src = this.$route.params.id1
-      const target = this.$route.params.id2
+      const id = this.$route.params.id
       const idsrc = this.formData.applicationSrc
       const idtarget = this.formData.applicationTarget
       const protocol = this.formData.protocol
@@ -184,8 +187,8 @@ export default {
       const frequency = this.formData.frequency
       const processingMode = this.formData.processingMode
       const x = {
-        applicationSrc: { id: idsrc },
-        applicationTarget: { id: idtarget },
+        applicationSrc: idsrc.id ? { id: idsrc.id } : { id: idsrc },
+        applicationTarget: idtarget.id ? { id: idtarget.id } : { id: idtarget },
         protocol: protocol,
         dataFormat: dataFormat,
         notes: notes,
@@ -194,7 +197,7 @@ export default {
         processingMode: processingMode
       }
       axios
-        .put(`${this.endpoint}/${src}/${target}`, x)
+        .put(`${this.endpoint}/${id}`, x)
         .then((response) => {
           console.log(response.data)
           alert('Interface' + this.formData + 'has been updated')

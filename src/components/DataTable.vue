@@ -98,7 +98,7 @@
               </button>
               <ul class="dropdown-menu">
                 <li><a class="dropdown-item" @click="deleteRessource(row.id)">Delete</a></li>
-                <router-link :to="getEditRoute(row)">
+                <router-link :to="getEditRoute(row.id)">
                   <li><a class="dropdown-item" href="#">Edit</a></li>
                 </router-link>
                 <li v-if="title === 'List of Applications'">
@@ -374,16 +374,7 @@ export default {
       if (!confirmed) {
         return
       }
-      if (this.delete === 'http://localhost:8080/api/v1/interfaces') {
-        axios
-          .delete(this.delete + '/' + id.applicationSrcId + '/' + id.applicationTargetId)
-          .then(() => {
-            window.location.reload()
-          })
-          .catch((error) => {
-            console.error(error)
-          })
-      } else {
+      
         axios
           .delete(this.delete + '/' + id)
           .then(() => {
@@ -392,17 +383,16 @@ export default {
           .catch((error) => {
             console.error(error)
           })
-      }
+      
     },
-    getEditRoute(row) {
+    getEditRoute(id) {
       let viewName = ''
       let params
       //  params = { id1: row.id.applicationSrcId , id2: row.id.applicationTargetId }
-      if (this.edit === '/interfaces/edit/') {
-        params = { id1: row.id.applicationSrcId, id2: row.id.applicationTargetId }
-      } else {
-        params = { id: row.id }
-      }
+     
+        params = { id: id }
+        
+      
 
       switch (this.edit) {
         case '/applications/edit/':

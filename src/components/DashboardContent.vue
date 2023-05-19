@@ -113,6 +113,41 @@ export default {
           label: 'Database Version'
         }
       ],
+      
+      InterfaceHeaders: [
+        {
+          name: 'applicationSrc',
+          label: 'Source'
+        },
+        {
+          name: 'applicationTarget',
+          label: 'Target'
+        },
+        {
+          name: 'protocol',
+          label: 'Protocol'
+        },
+        {
+          name: 'dataFormat',
+          label: 'Data Format'
+        },
+        {
+          name: 'notes',
+          label: 'notes'
+        },
+        {
+          name: 'flow',
+          label: 'Flow'
+        },
+        {
+          name: 'frequency',
+          label: 'Frequency'
+        },
+        {
+          name: 'processingMode',
+          label: 'Processing Mode'
+        }
+      ],
       headers: []
     }
   },
@@ -124,7 +159,7 @@ export default {
       } else if (this.selectedLink === 'Databases') {
         this.headers = this.DatabaseHeaders
       } else {
-        this.headers = []
+        this.headers = this.InterfaceHeaders
       }
       return this.headers
     },
