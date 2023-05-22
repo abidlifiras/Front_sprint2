@@ -8,7 +8,7 @@
               </div>
               <div class="col-md-6">
                 <label for="env-select" class="form-label">Select an Environment:</label>
-                <ComboBox :options="environments" :multiple="false" @option-selected="onEnvironmentSelected"></ComboBox> 
+                <ComboBox :options="environments" :multiple="false" @option-selected="onEnvironmentSelected" ></ComboBox> 
               </div>
             </div>
           </div>
@@ -55,7 +55,7 @@
 
   
   import axios from 'axios'
-  import ComboBox from './ComboBox.vue'
+  import ComboBox from './Combobox.vue'
   
   export default {
   components:{
@@ -122,7 +122,6 @@
     },
     onEnvironmentSelected(selectedOption) {
       this.selectedEnvironment = selectedOption
-      console.log(this.selectedEnvironment)
     },
       
       envDcAdd(resp, dcId, envId) {

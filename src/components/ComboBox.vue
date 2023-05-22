@@ -51,10 +51,12 @@
             {{ option.name }}
           </button>
           <!-- <h6 v-if="filteredOptions.length == 0" class="no-results-text">No results found</h6> -->
-          <button v-if="filteredOptions.length === 0" type="button" class="dropdown-item" @click="showAdd" data-bs-toggle="modal"
-          data-bs-target="#exampleModaleee"  >
-            Add Server
-          </button>
+          <div v-if="filteredOptions.length === 0 " >
+            <button v-if="addRessource==='Add server'" type="button" class="dropdown-item" @click="showAdd" data-bs-toggle="modal"
+          data-bs-target="#exampleModaleee">{{addRessource}}</button>
+          <button v-if="addRessource==='Add Environment'" type="button" class="dropdown-item" @click="showAdd" data-bs-toggle="modal"
+          data-bs-target="#exampleModaleee">{{addRessource}}</button>
+        </div>
 
           <!-- Button trigger modal -->
 
@@ -88,6 +90,11 @@ export default {
        multiple: {
         type: Boolean,
         default: true
+      },
+      addRessource:{
+        type : String,
+        default:''
+
       }
     },
     data() {

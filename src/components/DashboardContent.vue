@@ -33,11 +33,12 @@
         <Modal :appName="appName" :id="id" :selectedLink="selectedLink"></Modal>
       </div>
 
-      <new-data-table :headers="passHeaders()" :apiUrl="passUrl()"></new-data-table>
+      <new-data-table :headers="passHeaders()" :apiUrl="passUrl()" ></new-data-table>
     </div>
   </div>
 </template>
 <script>
+import axios from 'axios'
 import Modal from '@/components/Modal.vue'
 import NewDataTable from '@/components/NewDataTable.vue'
 export default {
@@ -113,7 +114,7 @@ export default {
           label: 'Database Version'
         }
       ],
-      headers: []
+      headers: [],
     }
   },
 

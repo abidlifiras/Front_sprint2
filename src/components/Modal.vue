@@ -17,7 +17,7 @@
         </div>
         <div class="modal-body">
          
-          <ComboBox :options="servers" @option-selected="onServerSelected"   ></ComboBox>
+          <ComboBox :options="servers" @option-selected="onServerSelected"  addRessource="Add server" ></ComboBox>
           <button @click.prevent="submitServers()" class="btn btn-primary" >Next</button>
         </div>
         
@@ -100,7 +100,7 @@
           </button>
         </div>
         <div class="modal-body">
-          <ComboBox :options="servers"></ComboBox>
+          <ComboBox :options="servers" addRessource='Add server'></ComboBox>
         </div>
         <div class="modal-footer"></div>
       </div>
@@ -109,7 +109,7 @@
   
 </template>
 <script>
-import ComboBox from './ComboBox.vue'
+import ComboBox from './Combobox.vue'
 
 
 import axios from 'axios'

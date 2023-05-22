@@ -4,7 +4,7 @@
       <h3>{{ currentCategory.category }}</h3>
       <div v-for="(question, index) in currentCategory.questions" :key="index" class="mb-3">
         <div v-if="question.response === null">
-          <p>{{ question.question }}</p>
+          <p>{{ question.question }}<span v-if="question.required" class="required">*</span></p>
           <div v-if="question.type === 'text'">
             <input
               type="text"
@@ -36,14 +36,13 @@
             </select>
           </div>
           <div v-else-if="question.type === 'checkbox_group'">
-            <div v-for="(option, index) in question.options" :key="index">
+            <div v-for="(option, index) in question.options" :key="index" >
               <input
                 type="checkbox"
                 :id="option.id"
                 :value="option.option"
                 v-model="formResponse[question.id]"
                 @change="updateFormResponse(question.id)"
-                :required="question.required"
               />
               <label :for="option.id">{{ option.option }}</label>
             </div>
@@ -58,7 +57,6 @@
                 v-model="formResponse[question.id]"
                 @change="updateFormResponse(question.id)"
                 :name="'question_' + question.id"
-                :required="question.required"
               />
               <label class="form-check-label" :for="option.id">{{ option.option }}</label>
             </div>
@@ -81,7 +79,7 @@
           </div>
         </div>
         <div v-else>
-          <p>{{ question.question }}</p>
+          <p>{{ question.question }}<span v-if="question.required" class="required">*</span></p>
           <div v-if="question.type === 'radio_group'" class="form-check">
             <div v-for="(option, index) in question.options" :key="index">
               <input
@@ -92,7 +90,6 @@
                 v-model="formResponse[question.id]"
                 @change="updateFormResponse(question.id)"
                 :name="'question_' + question.id"
-                :required="question.required"
                 :checked="option.option == question.response"
               />
               <label class="form-check-label" :for="option.id">{{ option.option }}</label>
@@ -133,7 +130,6 @@
           </div>
           <div v-else-if="question.type === 'select'">
             <select
-              :required="question.required"
               v-model="formResponse[question.id]"
               @change="updateFormResponse(question.id)"
             >

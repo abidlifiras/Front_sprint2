@@ -1,7 +1,7 @@
 <template>
   <div class="flex-shrink-0 p-3 bg-white" style="width: 280px">
     <a class="d-flex align-items-center pb-3 mb-3 text-decoration-none border-bottom">
-      <span class="fs-5 fw-semibold">{{ appName }}</span>
+      <span class="fs-5 fw-semibold" @click="handleLinkClick('Landing')">{{ appName }}</span>
     </a>
     <ul class="list-unstyled ps-0">
       <li class="mb-1">
@@ -43,13 +43,6 @@
             </li>
           </ul>
         </div>
-      </li>
-
-      <li class="mb-1">
-        <button class="btn btn-toggle align-items-center rounded collapsed">
-          App. Assessment Report
-        </button>
-        <div class="collapse" id="report-collapse"></div>
       </li>
     </ul>
   </div>
@@ -94,13 +87,16 @@ export default {
   mounted() {
     this.appID = this.$route.params.id
     this.fetchSteps(this.appID)
-    this.fetchAssessments()
   },
   methods: {
     handleLinkClick(link) {
-      this.$emit('linkClicked', link)
       if(link==="Assessment"){
-        this.$emit('categoryChanged', this.categories[1][0])
+        this.$emit('categoryChanged', this.categories[this.currentStepIndex][this.currentCategoryIndex])
+      }
+      else{ 
+        this.$emit('linkClicked', link)
+        this.$emit('categoryChanged', {})
+        this.fetchSteps(this.appID)
 
       }
     },

@@ -4,8 +4,11 @@
     <div class="col-md-3 col-lg-3">
       <Sidebar :appName="applicationName" @linkClicked="handleLinkClicked" @categoryChanged="handlecategoryChanged"></Sidebar>
     </div>
-    <div v-if ="selectedLink==='Assessment'" class="col-md-11 col-lg-8">
+    <div v-if ="selectedLink==='Assessment'|| Object.keys(categoryToshow).length !== 0" class="col-md-11 col-lg-8">
       <AssessmentForm :currentCategory="categoryToshow" :appId="appId" />
+    </div>
+    <div v-else-if="selectedLink==='Landing'"  class="col-md-11 col-lg-8">
+      <landingDashboard :id="appId" :appName="applicationName"></landingDashboard>
     </div>
     <div v-else  class="col-md-11 col-lg-8">
       <DashboardContent :selectedLink="selectedLink"
@@ -17,6 +20,7 @@
 <script>
 import axios from 'axios'
 import DashboardContent from '@/components/DashboardContent.vue'
+import landingDashboard from '../components/landingDashboard.vue'
 import Sidebar from '@/components/Sidebar.vue'
 import Navbar from '@/components/Navbar.vue'
 import AssessmentForm from '../components/AssessmentForm.vue'
@@ -26,12 +30,13 @@ export default {
     DashboardContent,
     Sidebar,
     Navbar,
-    AssessmentForm
+    AssessmentForm,
+    landingDashboard
   },
   data() {
     return {
       applicationName: '',
-      selectedLink: 'Servers',
+      selectedLink: 'Landing',
       appId: 0,
       categoryToshow : {}
 
@@ -56,6 +61,8 @@ export default {
     },
     handleLinkClicked(link) {
       this.selectedLink = link
+      console.log(link)
+
     },
     handlecategoryChanged(category){
       this.categoryToshow=category 
