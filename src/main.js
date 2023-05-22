@@ -6,7 +6,6 @@ import ApplicationsView from './views/ApplicationsView.vue'
 import ServersView from './views/ServersView.vue'
 import AddRessourceView from './views/AddRessourceView.vue'
 import MapAppServers from './views/MapAppServers.vue'
-import MapServerApps from './views/MapServerApps.vue'
 import EditAppView from './views/EditAppView.vue'
 import EditServerView from './views/EditServerView.vue'
 import UploadExcel from './views/UploadExcel.vue'
@@ -28,6 +27,7 @@ import EditEnvironmentView from './views/EditEnvironmentView.vue'
 import AddEnvironmentView from './views/AddEnvironmentView.vue'
 import Assessment from './views/Assessment.vue'
 import MainDashboard from './views/MainDashboard.vue'
+import AddServer from './components/AddServer.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -54,7 +54,7 @@ const router = createRouter({
     },
     {
       path: '/server/applications',
-      component: MapServerApps,
+      component: AddServer,
       props: (route) => ({ query: route.query }),
       name: 'MapServerApps'
     },

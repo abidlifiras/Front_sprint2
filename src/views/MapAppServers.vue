@@ -1,48 +1,7 @@
 <template>
   <div>
     <Navbar></Navbar>
-    <nav class="stepped-process" aria-label="Checkout process">
-      <p class="float-start mt-2 me-2 fw-bold d-sm-none">Step</p>
-      <ol>
-        <li
-          class="stepped-process-item"
-          :class="{ active: currentStep === 1, complete: currentStep > 1 }"
-        >
-          <a
-            class="stepped-process-link"
-            title="1. Create Server"
-            @click.prevent="setCurrentStep(1)"
-            >Create Application</a
-          >
-        </li>
-        <li
-          class="stepped-process-item"
-          :class="{ active: currentStep === 2, complete: currentStep > 1 }"
-        >
-          <a
-            class="stepped-process-link"
-            title="2. Map Servers"
-            aria-current="step"
-            @click.prevent="setCurrentStep(2)"
-            >Map servers</a
-          >
-        </li>
-        <li
-          class="stepped-process-item"
-          :class="{ active: currentStep === 3, complete: currentStep > 2 }"
-        >
-          <a
-            class="stepped-process-link"
-            title="2. Map Contacts"
-            aria-current="step"
-            @click.prevent="setCurrentStep(2)"
-            >Map Contacts</a
-          >
-        </li>
-      </ol>
-    </nav>
     <div class="container my-5 mx-5">
-      <div v-if="currentStep === 1">
         <div class="container">
           <form class="my-4">
             <div v-for="(field, index) in formFields" :key="index" class="mb-3">
@@ -74,86 +33,30 @@
                 />
               </template>
             </div>
-            <button @click.prevent="submitForm" class="btn btn-primary">Next</button>
-          </form>
-        </div>
-      </div>
-      <div v-if="currentStep === 2">
-        <div v-if="servers.length">
-          <h1 class="d-flex flex-column justify-content-center align-items-center">
-            Choose Servers for {{ formData.appName }} :
-          </h1>
-          <form
-            @submit.prevent="submitServers"
-            class="d-flex flex-column justify-content-center align-items-center"
-          >
-            <div class="list-group">
-              <div
-                v-for="server in servers"
-                :key="server.id"
-                class="list-group-item d-flex align-items-center"
-              >
-                <input
-                  type="checkbox"
-                  :value="server"
-                  v-model="selectedServers"
-                  class="form-check-input"
-                />
-                <label class="form-check-label ms-3">{{ server.serverName }}</label>
-              </div>
-              <button type="submit" class="btn btn-primary mt-3">Next</button>
-            </div>
-          </form>
-        </div>
-      </div>
-      <div v-if="currentStep === 3">
-        <div v-if="contacts.length">
-          <h1 class="d-flex flex-column justify-content-center align-items-center">
-            Choose Contacts for {{ formData.appName }} :
-          </h1>
-          <form
-            @submit.prevent="submitContacts"
-            class="d-flex flex-column justify-content-center align-items-center"
-          >
-            <div class="list-group">
-              <div
-                v-for="contact in contacts"
-                :key="contact.id"
-                class="list-group-item d-flex align-items-center"
-              >
-                <input
-                  type="checkbox"
-                  :value="contact"
-                  v-model="selectedContacts"
-                  class="form-check-input"
-                />
-                <label class="form-check-label ms-3"
-                  >{{ contact.fullName }} : {{ contact.title }}
-                </label>
-              </div>
-            </div>
-            <button @click.prevent="submitContacts" type="submit" class="btn btn-primary mt-3">
-              Submit
-            </button>
-          </form>
+            <label class="form-label">Select Servers</label>
+            <ComboBox :options="servers" @option-selected="onServerSelected"></ComboBox>
+            <br>
+            <label class="form-label">Select Contacts</label>
+            <ComboBox :options="contacts" @option-selected="onContactSelected"></ComboBox>
+
+            <button  @click.prevent="submitApplications" class="btn btn-primary">Submit</button>          </form>
         </div>
       </div>
     </div>
     <Footer></Footer>
-  </div>
 </template>
 
 <script>
 import Navbar from '@/components/Navbar.vue'
 import Footer from '@/components/Footer.vue'
-import AddRessourceView from './AddRessourceView.vue'
 import axios from 'axios'
+import ComboBox from '../components/ComboBox.vue'
 
 export default {
   components: {
     Navbar,
     Footer,
-    AddRessourceView
+    ComboBox
   },
 
   data() {
@@ -183,12 +86,26 @@ export default {
     }
   },
   created() {
-    axios.get('http://localhost:8080/api/v1/servers/non-archived').then((response) => {
-      this.servers = response.data
-    })
-    axios.get('http://localhost:8080/api/v1/contacts/non-archived').then((response) => {
-      this.contacts = response.data
-    })
+    axios.get('http://localhost:8080/api/v1/servers/non-archived')
+    .then((response) => {
+        const Servs = response.data.map((server) => {
+          return {
+            id: server.id,
+            name: server.serverName
+          }
+        })
+        this.servers = Servs
+      })
+    axios.get('http://localhost:8080/api/v1/contacts/non-archived')
+    .then((response) => {
+        const Contacts = response.data.map((contact) => {
+          return {
+            id: contact.id,
+            name: contact.fullName
+          }
+        })
+        this.contacts = Contacts
+      })
   },
   methods: {
     submitServers() {
@@ -196,10 +113,10 @@ export default {
       console.log(this.selectedApplications)
       console.log(this.formData)
     },
-    submitContacts() {
+    submitApplications() {
       this.responseApplication = JSON.stringify(this.formData)
       console.log(this.responseApplication)
-
+      if(this.submitForm()==true){
       if (this.selectedServers.length === 0) {
         if (this.selectedContacts.length === 0) {
           axios
@@ -306,7 +223,7 @@ export default {
               this.$router.push('/applications')
             })
         }
-      }
+      }}
     },
     setCurrentStep(step) {
       this.currentStep = step
@@ -319,7 +236,13 @@ export default {
           return
         }
       }
-      this.currentStep = 2
+      return true
+    },
+    onContactSelected(selectedOptions){
+      this.selectedContacts=selectedOptions
+    },
+    onServerSelected(selectedOptions){
+      this.selectedServers=selectedOptions
     }
   }
 }

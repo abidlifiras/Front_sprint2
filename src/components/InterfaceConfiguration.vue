@@ -4,17 +4,12 @@
         <div class="row align-items-center">
   <div class="col-md-6">
     <label for="dc_select" class="form-label">Select an application:</label>
-    <ComboBox
-      :options="applications"
-      :multiple="false"
-      @option-selected="onApplicationSelected"
-    ></ComboBox>
+    <ComboBox :options="applicationsSource" :multiple="false" @option-selected="onSourceAppSelected" :defaultValue="defaultValueSource"></ComboBox>
+
   </div>
   <div class="col-md-6">
-    <div class="form-check form-switch">
-      <input class="form-check-input" type="checkbox" id="toggle"  @change="toggleVariable = !toggleVariable">
-      <label class="form-check-label" for="toggle">Target application </label>
-    </div>
+    <label for="dc_select" class="form-label">Select an application:</label>
+    <ComboBox :options="applicationsTarget" :multiple='false' @option-selected="onTargetAppSelected" :defaultValue="defaultValueTarget"></ComboBox>
   </div>
 </div>
 
@@ -73,12 +68,19 @@
     },
   
     props: {
-      appId: Number
+      appId: Number,
+      appName:String
     },
     data() {
       return {
         toggleVariable: false,
+        selectedAppSrc:0,
+        selectedAppTarget:0,
         applications: [],
+        defaultValueSource:null,
+        defaultValueTarget:null,
+        applicationsSource: [],
+        applicationsTarget: [],
         selectedApplication: {},
         formData: {},
         formFields: [
@@ -149,14 +151,27 @@
           }
         })
         this.applications = apps
+        this.applicationsTarget = this.applications
+        this.applicationsSource = this.applications
       
       })
     },
     
     methods: {
-      onApplicationSelected(selectedOption) {
-        this.selectedApplication = selectedOption
-      },
+      onSourceAppSelected(selectedOption) {
+      this.selectedAppSrc = selectedOption.id;
+      this.applicationsTarget = this.applications.filter(app => app.id !== selectedOption.id);
+      this.defaultValueTarget={id:this.appId ,name:this.appName}
+      this.selectedAppTarget = this.appId;
+
+    },
+    onTargetAppSelected(selectedOption) {
+      this.selectedAppTarget = selectedOption.id;
+      this.applicationsSource = this.applications.filter(app => app.id !== selectedOption.id);
+      this.defaultValueSource={id:this.appId ,name:this.appName}
+      this.selectedAppSrc = this.appId;
+
+    },
       
       submitForm() {
         // Check if required fields are empty
@@ -167,15 +182,13 @@
           }
         }
         
-        const appSrc = this.toggleVariable ? this.appId : this.selectedApplication.id;
-        const appTarget = this.toggleVariable ? this.selectedApplication.id : this.appId;
         axios
         .post('http://localhost:8080/api/v1/interfaces', {
           applicationSrc: {
-            id: appSrc
+            id: this.selectedAppSrc
           },
           applicationTarget: {
-            id: appTarget
+            id: this.selectedAppTarget
           },
           protocol: this.formData.protocol,
           dataFormat: this.formData.dataFormat,

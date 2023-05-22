@@ -1,38 +1,6 @@
 <template>
-  <div>
     <Navbar></Navbar>
-    <nav class="stepped-process" aria-label="Checkout process">
-      <p class="float-start mt-2 me-2 fw-bold d-sm-none">Step</p>
-      <ol>
-        <li
-          class="stepped-process-item"
-          :class="{ active: currentStep === 1, complete: currentStep > 1 }"
-        >
-          <a
-            class="stepped-process-link"
-            href="#"
-            title="1. Create Server"
-            @click.prevent="setCurrentStep(1)"
-            >Create Contact</a
-          >
-        </li>
-        <li
-          class="stepped-process-item"
-          :class="{ active: currentStep === 2, complete: currentStep > 2 }"
-        >
-          <a
-            class="stepped-process-link"
-            href="#"
-            title="2. Map Databases"
-            aria-current="step"
-            @click.prevent="setCurrentStep(2)"
-            >Map Applications</a
-          >
-        </li>
-      </ol>
-    </nav>
     <div class="container my-5 mx-5">
-      <div v-if="currentStep === 1">
         <div class="container">
           <form class="my-4">
             <div v-for="(field, index) in formFields" :key="index" class="mb-3">
@@ -64,52 +32,26 @@
                 />
               </template>
             </div>
-            <button @click.prevent="submitForm" class="btn btn-primary">Next</button>
+            <label class="form-label">Select Applications</label>
+            <ComboBox :options="applications" @option-selected="onApplicationSelected"></ComboBox>
+            <button  @click.prevent="submitApplications" class="btn btn-primary">Next</button>
           </form>
         </div>
-      </div>
-      <div v-if="currentStep === 2">
-        <div v-if="applications.length">
-          <h1 class="d-flex flex-column justify-content-center align-items-center">
-            Choose application for {{ formData.fullName }} :
-          </h1>
-          <form
-            @submit.prevent="submitApplications"
-            class="d-flex flex-column justify-content-center align-items-center"
-          >
-            <div class="list-group">
-              <div
-                v-for="application in applications"
-                :key="application.id"
-                class="list-group-item d-flex align-items-center"
-              >
-                <input
-                  type="checkbox"
-                  :value="application"
-                  v-model="selectedApplications"
-                  class="form-check-input"
-                />
-                <label class="form-check-label ms-3">{{ application.appName }}</label>
-              </div>
-            </div>
-            <button type="submit" class="btn btn-primary mt-3">Next</button>
-          </form>
-        </div>
-      </div>
-    </div>
-    <Footer></Footer>
   </div>
+  <Footer></Footer>
 </template>
 
 <script>
 import Navbar from '@/components/Navbar.vue'
 import Footer from '@/components/Footer.vue'
 import axios from 'axios'
+import ComboBox from '../components/ComboBox.vue'
 
 export default {
   components: {
     Navbar,
-    Footer
+    Footer,
+    ComboBox
   },
 
   data() {
@@ -134,14 +76,27 @@ export default {
     }
   },
   created() {
-    axios.get('http://localhost:8080/api/v1/applications/all').then((response) => {
-      this.applications = response.data
-    })
+    axios
+      .get('http://localhost:8080/api/v1/applications/all')
+      .then((response) => {
+        const APs = response.data.map((application) => {
+          return {
+            id: application.id,
+            name: application.appName
+          }
+        })
+        this.applications = APs
+      })
+      .catch((error) => {
+        console.log(error)
+      })
   },
   methods: {
     submitApplications() {
+      if (this.submitForm()==true){
       this.responseContact = JSON.stringify(this.formData)
       if (this.selectedApplications.length === 0) {
+        console.log(this.responseContact)
         axios
           .post('http://localhost:8080/api/v1/contacts', this.responseContact, {
             headers: {
@@ -157,6 +112,7 @@ export default {
             console.error(error)
           })
       } else {
+        console.log(this.responseContact)
         axios
           .post('http://localhost:8080/api/v1/contacts', this.responseContact, {
             headers: {
@@ -183,21 +139,22 @@ export default {
                 })
             })
           })
-      }
-    },
-    setCurrentStep(step) {
-      this.currentStep = step
+      }}
     },
     submitForm() {
       // Check if required fields are empty
       for (const field of this.formFields) {
         if (field.required && !this.formData[field.name]) {
           alert(`${field.label} is required`)
-          return
+          return 
         }
       }
-      this.currentStep = 2
-    }
+      return true
+    } ,
+  onApplicationSelected(selectedOptions){
+    this.selectedApplications = selectedOptions
+
+  }
   }
 }
 </script>

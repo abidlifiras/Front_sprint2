@@ -9,7 +9,7 @@
         data-bs-toggle="dropdown"
         aria-expanded="false"
       >
-        <template v-if="selectedOptionName.length > 0">
+        <template v-if="selectedOptionName && selectedOptionName.length > 0">
           {{ selectedOptionName.slice(0, 3).join(', ') }}
           <template v-if="selectedOptionName.length > 3">
             +{{ selectedOptionName.length - 3 }}
@@ -50,63 +50,62 @@
           >
             {{ option.name }}
           </button>
-          <!-- <h6 v-if="filteredOptions.length == 0" class="no-results-text">No results found</h6> -->
-          <div v-if="filteredOptions.length === 0 " >
-            <button v-if="addRessource==='Add server'" type="button" class="dropdown-item" @click="showAdd" data-bs-toggle="modal"
-          data-bs-target="#exampleModaleee">{{addRessource}}</button>
-          <button v-if="addRessource==='Add Environment'" type="button" class="dropdown-item" @click="showAdd" data-bs-toggle="modal"
-          data-bs-target="#exampleModaleee">{{addRessource}}</button>
-        </div>
-
-          <!-- Button trigger modal -->
-
-
-<!-- Modal -->
-
-
-          <!-- <div class="dropdown-footer" v-show="selectedOptions.length > 0">
-          <button type="button" class="btn btn-secondary" @click="toggleDropdown">
-            Done
-          </button>
-        </div> -->
+          <div v-if="filteredOptions.length === 0">
+            <button v-if="addRessource === 'Add server'" type="button" class="dropdown-item" @click="showAdd" data-bs-toggle="modal" data-bs-target="#exampleModaleee">{{ addRessource }}</button>
+            <button v-if="addRessource === 'Add Environment'" type="button" class="dropdown-item" @click="showAdd" data-bs-toggle="modal" data-bs-target="#exampleModaleee">{{ addRessource }}</button>
+          </div>
         </div>
       </div>
     </div>
   </div>
-
 </template>
+
 <script>
-
-
 export default {
-    props: {
-        options: {
-            type: Array
-        },
-        placeholder: {
-            type: String,
-            default: "Select an option"
-        },
-       multiple: {
-        type: Boolean,
-        default: true
-      },
-      addRessource:{
-        type : String,
-        default:''
-
+  props: {
+    options: {
+      type: Array,
+    },
+    placeholder: {
+      type: String,
+      default: "Select an option",
+    },
+    multiple: {
+      type: Boolean,
+      default: true,
+    },
+    addRessource: {
+      type: String,
+      default: '',
+    },
+    defaultValue: {
+      type: [Object, Array],
+      default: null,
+    },
+  },
+  data() {
+    return {
+      selectedOption: null,
+      searchTerm: "",
+      selectedOptions: [],
+      selectedOptionName: [],
+      isOpen: false,
+      defaultvalueModified: false,
+    };
+  },
+  created() {
+    if (this.defaultValue !== null) {
+      this.applyDefaultValue();
+    }
+  },
+  watch: {
+    defaultValue(newValue) {
+      if (newValue !== null) {
+        this.applyDefaultValue();
       }
     },
-    data() {
-        return {
-            selectedOption: null,
-            searchTerm: "",
-            selectedOptions: [],
-            selectedOptionName: [],
-            isOpen: false
-        };
-    },
-    computed: {
+  },
+  computed: {
         filteredOptions() {
             if (!this.searchTerm) {
                 return this.options;
@@ -115,47 +114,61 @@ export default {
             return this.options.filter((option) => option.name.toLowerCase().includes(term));
         }
     },
-    methods: {
-        showAdd() {
-            this.$emit("button-pop", true);
-        },
-        onOptionSelected(option) {
-            if (this.multiple) {
-              if (this.selectedOptions.includes(option)) {
-                const index = this.selectedOptions.indexOf(option);
-                this.selectedOptions.splice(index, 1);
-              } else {
-                this.selectedOptions.push(option);
-              }
-              this.selectedOptionName = this.selectedOptions.map((option) => option.name);
-              this.$emit("option-selected", this.selectedOptions);
-            } else {
-              this.selectedOptions = [option];
-              this.selectedOptionName = option ? [option.name] : [];
-              this.$emit("option-selected", option);
-              this.isOpen = false; }
-          },    
-           toggleDropdown() {
-            this.isOpen = !this.isOpen;
-            if (!this.isOpen) {
-                this.$refs.dropdown.querySelector(".btn").blur();
-            }
+  methods: {
+    applyDefaultValue() {
+      if (Array.isArray(this.defaultValue)) {
+        this.selectedOptions = this.defaultValue;
+        this.selectedOptionName = this.defaultValue.map((option) => option.name);
+      } else {
+        this.selectedOptions = [this.defaultValue];
+        this.selectedOptionName = [this.defaultValue.name];
+      }
+      this.defaultvalueModified = true;
+    },
+    showAdd() {
+      this.$emit("button-pop", true);
+    },
+    onOptionSelected(option) {
+      if (this.multiple) {
+        if (this.selectedOptions.includes(option)) {
+          const index = this.selectedOptions.indexOf(option);
+          this.selectedOptions.splice(index, 1);
+        } else {
+          this.selectedOptions.push(option);
         }
-    }
-}
+        this.selectedOptionName = this.selectedOptions.map((option) => option.name);
+        this.$emit("option-selected", this.selectedOptions);
+      } else {
+        this.selectedOptions = [option];
+        this.selectedOptionName = option ? [option.name] : [];
+        this.$emit("option-selected", option);
+        this.isOpen = false;
+      }
+    },
+    toggleDropdown() {
+      this.isOpen = !this.isOpen;
+      if (!this.isOpen) {
+        this.$refs.dropdown.querySelector(".btn").blur();
+      }
+    },
+  },
+};
 </script>
+
 <style>
 .dropdown-menu-scrollable {
   max-height: 200px;
   overflow-y: auto;
 }
+
 .fixed-top {
   position: sticky;
   top: 0;
   z-index: 1;
   background-color: #fff;
 }
+
 .multiple-selection {
-  background-color: #f5f5f5; 
+  background-color: #f5f5f5;
 }
 </style>

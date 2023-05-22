@@ -100,7 +100,7 @@
           </button>
         </div>
         <div class="modal-body">
-          <InterfaceConfig :appId="this.id"></InterfaceConfig>
+          <InterfaceConfig :appId="this.id" :appName="appName"></InterfaceConfig>
         </div>
         <div class="modal-footer"></div>
       </div>

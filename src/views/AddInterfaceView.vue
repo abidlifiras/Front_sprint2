@@ -5,21 +5,11 @@
       <div class="row justify-content-center">
         <div class="col-md-6">
           <label for="app-select-src" class="form-label">Select a Source Application:</label>
-          <select id="app-select-src" v-model="selectedAppSrc" class="form-select mb-3">
-            <option disabled value="">Please select one</option>
-            <option v-for="app in applications" :key="app.id" :value="app.id">
-              {{ app.appName }}
-            </option>
-          </select>
+          <ComboBox :options="applicationsSource" :multiple="false" @option-selected="onSourceAppSelected" :defaultValue="{id:12, name:'defaulttest'}"></ComboBox>
         </div>
         <div class="col-md-6">
           <label for="app-select-target" class="form-label">Select a Target Application:</label>
-          <select id="app-select-target" v-model="selectedAppTarget" class="form-select mb-3">
-            <option disabled value="">Please select one</option>
-            <option v-for="app in applications" :key="app.id" :value="app.id">
-              {{ app.appName }}
-            </option>
-          </select>
+          <ComboBox :options="applicationsTarget" :multiple='false' @option-selected="onTargetAppSelected"></ComboBox>
         </div>
       </div>
     </div>
@@ -73,15 +63,19 @@
 import Navbar from '@/components/Navbar.vue'
 import Footer from '@/components/Footer.vue'
 import axios from 'axios'
+import ComboBox from '../components/ComboBox.vue'
 
 export default {
   components: {
     Navbar,
-    Footer
+    Footer,
+    ComboBox
   },
   data() {
     return {
       applications: [],
+      applicationsSource: [],
+      applicationsTarget: [],
       selectedAppSrc: '',
       selectedAppTarget: '',
       formData: {
@@ -151,13 +145,28 @@ export default {
     }
   },
   created() {
-    axios.get('http://localhost:8080/api/v1/applications/all').then((response) => {
-      this.applications = response.data
-
-      console.log(this.applications)
-    })
+    axios.get('http://localhost:8080/api/v1/applications/all')
+    .then((response) => {
+        const Applications = response.data.map((application) => {
+          return {
+            id: application.id,
+            name: application.appName
+          }
+        })
+        this.applications = Applications
+        this.applicationsTarget = this.applications
+        this.applicationsSource = this.applications
+      })
   },
   methods: {
+    onSourceAppSelected(selectedOption) {
+      this.selectedAppSrc = selectedOption.id;
+      this.applicationsTarget = this.applications.filter(app => app.id !== selectedOption.id);
+    },
+    onTargetAppSelected(selectedOption) {
+      this.selectedAppTarget = selectedOption.id;
+      this.applicationsSource = this.applications.filter(app => app.id !== selectedOption.id);
+    },
     submitInterfaces() {
       axios
         .post('http://localhost:8080/api/v1/interfaces', {
@@ -176,6 +185,7 @@ export default {
         })
         .then((response) => {
         console.log(response.data)
+        this.$router.push('/interfaces')
           })
         .catch((error) => {
           // handle error response
