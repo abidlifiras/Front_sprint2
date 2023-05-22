@@ -175,8 +175,8 @@ export default {
           frequency: this.formData.frequency
         })
         .then((response) => {
-          alert('Resource created successfully!')
-        })
+        console.log(response.data)
+          })
         .catch((error) => {
           // handle error response
           console.log(error.response.data)

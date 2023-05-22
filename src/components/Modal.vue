@@ -100,7 +100,7 @@
           </button>
         </div>
         <div class="modal-body">
-          <ComboBox :options="servers" addRessource='Add server'></ComboBox>
+          <InterfaceConfig :appId="this.id"></InterfaceConfig>
         </div>
         <div class="modal-footer"></div>
       </div>
@@ -109,18 +109,14 @@
   
 </template>
 <script>
-import ComboBox from './Combobox.vue'
+import ComboBox from './ComboBox.vue'
+import InterfaceConfig from './InterfaceConfiguration.vue'
 
 
 import axios from 'axios'
 import AddServer from './AddServer.vue'
 export default {
   props: {
-    components: {
-      ComboBox,
-      AddServer
-      
-    },
     appName: {
       type: String,
       required: true
@@ -210,6 +206,6 @@ export default {
     }
   },
 
-  components: { ComboBox, AddServer }
+  components: { ComboBox, AddServer, InterfaceConfig }
 }
 </script>

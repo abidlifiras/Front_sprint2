@@ -55,7 +55,7 @@
 
   
   import axios from 'axios'
-  import ComboBox from './Combobox.vue'
+  import ComboBox from './ComboBox.vue'
   
   export default {
   components:{
@@ -186,8 +186,7 @@
                 }
               }
             ).then(() => {
-                alert('Resource created and linked successfully!')
-                    window.location.reload()
+                    this.$router.go(0)
             })
             .catch((error) => {
               console.error(error)

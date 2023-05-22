@@ -85,7 +85,7 @@ const router = createRouter({
       name: 'EditEnvironmentView'
     },
     {
-      path: '/interfaces/edit/:id1/:id2',
+      path: '/interfaces/edit/:id',
       component: EditInterfaceView,
       props: true,
       name: 'EditInterfaceView'

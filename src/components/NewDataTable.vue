@@ -17,6 +17,9 @@
                 <img src="../assets/Add.svg" type="button" @click="addEnv(item.id)" data-bs-toggle="modal" data-bs-target="#AddEnvironment" alt="Add Environment" class="img-fluid add-image" />
               </template>
             </template>
+            <template v-else-if="header.name === 'applicationSrc' || header.name === 'applicationTarget'  ">
+              {{ item[header.name].appName}}
+            </template>
             <template v-else-if="header.name === 'datacenter'">
               <template v-if="item[header.name]">
                 {{ item[header.name].name }}
@@ -93,7 +96,7 @@
 
 <script>
 import axios from 'axios'
-import Combobox from './Combobox.vue'
+import Combobox from './ComboBox.vue'
 
 export default {
   components :{
