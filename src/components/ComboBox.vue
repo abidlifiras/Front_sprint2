@@ -154,3 +154,28 @@ export default {
   background-color: #f5f5f5;
 }
 </style>
+
+<!-- 
+<button
+  v-for="(option, index) in filteredOptions"
+  :key="index"
+  type="button"
+  class="dropdown-item"
+  :class="{ active: selectedOptions.includes(option) }"
+  @click="onOptionSelected(option)"
+>
+  <div class="form-check">
+    <input
+      class="form-check-input"
+      type="checkbox"
+      :checked="selectedOptions.includes(option)"
+      @click.stop
+    />
+    <label class="form-check-label">{{ option.name }}</label>
+  </div>
+</button> -->
+
+<!-- .dropdown-item .form-check {
+  display: flex;
+  align-items: center;
+} -->
