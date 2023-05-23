@@ -142,13 +142,14 @@ export default {
         this.selectedOptions = [option];
         this.selectedOptionName = option ? [option.name] : [];
         this.$emit("option-selected", option);
-        this.isOpen = false;
       }
     },
     toggleDropdown() {
-      this.isOpen = !this.isOpen;
-      if (!this.isOpen) {
-        this.$refs.dropdown.querySelector(".btn").blur();
+      if (this.multiple) {
+        this.isOpen = !this.isOpen;
+      }
+      else{
+        this.isOpen=false
       }
     },
   },

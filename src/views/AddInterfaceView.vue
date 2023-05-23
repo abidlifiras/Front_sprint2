@@ -5,7 +5,7 @@
       <div class="row justify-content-center">
         <div class="col-md-6">
           <label for="app-select-src" class="form-label">Select a Source Application:</label>
-          <ComboBox :options="applicationsSource" :multiple="false" @option-selected="onSourceAppSelected" :defaultValue="{id:12, name:'defaulttest'}"></ComboBox>
+          <ComboBox :options="applicationsSource" :multiple="false" @option-selected="onSourceAppSelected" ></ComboBox>
         </div>
         <div class="col-md-6">
           <label for="app-select-target" class="form-label">Select a Target Application:</label>

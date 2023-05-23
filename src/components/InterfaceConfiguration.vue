@@ -12,7 +12,6 @@
     <ComboBox :options="applicationsTarget" :multiple='false' @option-selected="onTargetAppSelected" :defaultValue="defaultValueTarget"></ComboBox>
   </div>
 </div>
-
       </div>
       <div class="container">
         <form class="my-4">

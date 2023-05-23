@@ -2,13 +2,26 @@
   <div>
     <Navbar></Navbar>
     <div class="container">
+      <div class="container my-3">
+        <div class="row align-items-center">
+        <div class="col-md-6">
+          <label for="dc_select" class="form-label">Select an application:</label>
+          <ComboBox :options="applicationsSource" :multiple="false" @option-selected="onSourceAppSelected" :defaultValue="defaultValueSource"></ComboBox>
+
+        </div>
+        <div class="col-md-6">
+          <label for="dc_select" class="form-label">Select an application:</label>
+          <ComboBox :options="applicationsTarget" :multiple='false' @option-selected="onTargetAppSelected" :defaultValue="defaultValueTarget"></ComboBox>
+        </div>
+      </div>
+      </div>
       <form class="my-4">
         <div v-for="(field, index) in formFields" :key="index" class="mb-3">
-          <label class="form-label">
+          <template v-if="field.type === 'text'">
+            <label class="form-label">
             {{ field.label }}
             <span v-if="field.required" class="required">*</span>
           </label>
-          <template v-if="field.type === 'text'">
             <input
               :type="field.type"
               v-model="formData[field.name]"
@@ -17,6 +30,10 @@
             />
           </template>
           <template v-else-if="field.type === 'textarea'">
+            <label class="form-label">
+            {{ field.label }}
+            <span v-if="field.required" class="required">*</span>
+          </label>
             <textarea
               v-model="formData[field.name]"
               class="form-control"
@@ -24,6 +41,10 @@
             ></textarea>
           </template>
           <template v-else-if="field.type === 'number'">
+            <label class="form-label">
+            {{ field.label }}
+            <span v-if="field.required" class="required">*</span>
+          </label>
             <input
               v-model="formData[field.name]"
               class="form-control"
@@ -32,6 +53,10 @@
             />
           </template>
           <template v-else-if="field.type === 'select'">
+            <label class="form-label">
+            {{ field.label }}
+            <span v-if="field.required" class="required">*</span>
+          </label>
             <select
               v-model="formData[field.name]"
               class="form-select"
@@ -39,18 +64,6 @@
               :required="field.required"
             >
               <option v-for="option in field.options" :key="option.value" :value="option.value">
-                {{ option.label }}
-              </option>
-            </select>
-          </template>
-          <template v-else-if="field.type === 'selectApps'">
-            <select
-              v-model="formData[field.name]"
-              class="form-select"
-              :style="field.style"
-              :required="field.required"
-            >
-              <option v-for="option in applications" :key="option.value" :value="option.value">
                 {{ option.label }}
               </option>
             </select>
@@ -67,34 +80,45 @@
 import Navbar from '@/components/Navbar.vue'
 import Footer from '@/components/Footer.vue'
 import axios from 'axios'
+import ComboBox from '../components/ComboBox.vue'
+
 
 export default {
   components: {
     Navbar,
-    Footer
+    Footer,
+    ComboBox
   },
   data() {
     return {
       formData: {},
       formFields: [],
       endpoint: '',
-      applications: []
+      applications: [],
+      selectedAppSrc:0,
+      selectedAppTarget:0,
+      defaultValueSource:null,
+      defaultValueTarget:null,
+      applicationsSource: [],
+      applicationsTarget: [],
     }
   },
 
   mounted() {
-    axios
-      .get('http://localhost:8080/api/v1/applications')
+    axios.get("http://localhost:8080/api/v1/applications/all")
       .then((response) => {
-        this.applications = response.data.map((app) => ({
-          label: app.appName,
-          value: app.id
-        }))
-
-        console.log(this.applications)
-      })
-      .catch((error) => {
-        console.log(error)
+        const apps = response.data.map((application) => {
+          return {
+            id: application.id,
+            name: application.appName
+          }
+        })
+        this.applications = apps
+        this.applicationsTarget = this.application
+        this.applicationsTarget = this.applications.filter(app => app.id !== this.formData.applicationSrc.id);
+        this.applicationsSource = this.applications
+        this.applicationsSource = this.applications.filter(app => app.id !== this.formData.applicationTarget.id);
+      
       })
     const FORM_CONFIGS = {
       interfacesView: [
@@ -158,6 +182,10 @@ export default {
       .get(`${this.endpoint}/${id}`)
       .then((response) => {
         this.formData = response.data
+        this.defaultValueSource={id:this.formData.applicationSrc.id ,name:this.formData.applicationSrc.appName}
+        this.defaultValueTarget={id:this.formData.applicationTarget.id ,name:this.formData.applicationTarget.appName}
+        this.selectedAppSrc=this.formData.applicationSrc.id
+        this.selectedAppTarget =this.formData.applicationTarget.id
       })
       .catch((error) => {
         console.log(error)
@@ -178,8 +206,8 @@ export default {
       }
 
       const id = this.$route.params.id
-      const idsrc = this.formData.applicationSrc
-      const idtarget = this.formData.applicationTarget
+      const idsrc = this.selectedAppSrc
+      const idtarget = this.selectedAppTarget
       const protocol = this.formData.protocol
       const dataFormat = this.formData.dataFormat
       const notes = this.formData.notes
@@ -206,7 +234,18 @@ export default {
         .catch((error) => {
           console.log(error)
         })
-    }
+    },
+  onSourceAppSelected(selectedOption) {
+      this.selectedAppSrc = selectedOption.id;
+      this.applicationsTarget = this.applications.filter(app => app.id !== selectedOption.id);
+
+    },
+    onTargetAppSelected(selectedOption) {
+      this.selectedAppTarget = selectedOption.id;
+      this.applicationsSource = this.applications.filter(app => app.id !== selectedOption.id);
+
+
+    },
   }
 }
 </script>
